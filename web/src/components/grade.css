@@ -1,0 +1,538 @@
+/* ------------------------------------------------------------------
+   Grade — the photograph above, the controls below; side by side
+   from tablet up. The image never sits on anything but true black.
+   ------------------------------------------------------------------ */
+
+.grade {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.grade--empty {
+  justify-content: center;
+}
+
+/* -- the image ---------------------------------------------------- */
+
+.grade__stage {
+  padding: 14px 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* the grade is judged on every pixel: the frame keeps the photograph's
+   own shape, and its width shrinks so its height fits the budget */
+.grade__frame {
+  --h: 56dvh;
+  width: 100%;
+  max-width: calc(var(--h) * var(--ar));
+  margin-inline: auto;
+}
+
+.grade__reveal .reveal {
+  background: #000;
+}
+
+.grade__reveal .reveal__caption {
+  margin-top: 10px;
+}
+
+/* -- histogram ---------------------------------------------------- */
+
+.hist {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hist svg,
+.hist--empty {
+  display: block;
+  width: 100%;
+  height: 64px;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+
+.hist__r,
+.hist__g,
+.hist__b {
+  mix-blend-mode: screen;
+}
+
+.hist__r {
+  fill: rgb(214 88 76 / 0.55);
+}
+.hist__g {
+  fill: rgb(92 176 112 / 0.5);
+}
+.hist__b {
+  fill: rgb(86 128 214 / 0.55);
+}
+
+.hist__l {
+  fill: none;
+  stroke: var(--ink-2);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+:root[data-theme="light"] .hist__r,
+:root[data-theme="light"] .hist__g,
+:root[data-theme="light"] .hist__b {
+  mix-blend-mode: multiply;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .hist__r,
+  :root:not([data-theme="dark"]) .hist__g,
+  :root:not([data-theme="dark"]) .hist__b {
+    mix-blend-mode: multiply;
+  }
+}
+
+.hist__clip {
+  display: flex;
+  justify-content: space-between;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+
+.hist__clip [data-warn] {
+  color: var(--err);
+}
+
+/* -- panel -------------------------------------------------------- */
+
+.grade__panel {
+  padding: 18px 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* A scrolling row sets overflow, which zeroes its automatic minimum
+   size — inside the desktop panel's fixed-height column, flex-shrink
+   would crush it to nothing. Same trap as .modes in Studio. */
+.grade__looks {
+  display: flex;
+  flex: none;
+  gap: 6px;
+  overflow-x: auto;
+  margin-inline: -16px;
+  padding: 2px 16px 4px;
+  scrollbar-width: none;
+}
+
+.grade__looks::-webkit-scrollbar {
+  display: none;
+}
+
+.look {
+  position: relative;
+  flex: none;
+}
+
+.look .chip {
+  white-space: nowrap;
+}
+
+.look__x {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-full);
+  border: 1px solid var(--line-strong);
+  background: var(--bg);
+  color: var(--ink-3);
+  font-size: 0.75rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.look__x:hover {
+  color: var(--err);
+  border-color: var(--err);
+}
+
+/* -- dial --------------------------------------------------------- */
+
+.dial {
+  padding: 4px 0 10px;
+}
+
+.dial__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+}
+
+.dial__label {
+  flex: 1;
+  font-size: var(--t-small);
+  color: var(--ink-2);
+}
+
+.dial[data-moved] .dial__label {
+  color: var(--ink);
+}
+
+.dial__reset {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: 0.9375rem;
+  line-height: 1;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-full);
+  cursor: pointer;
+}
+
+.dial__reset:hover {
+  color: var(--gold);
+}
+
+.dial__val {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+  min-width: 5.5em;
+  text-align: right;
+}
+
+.dial[data-moved] .dial__val {
+  color: var(--gold);
+}
+
+/* the track fills outward from zero, not from the left edge */
+.dial__range {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 32px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+
+.dial__range::-webkit-slider-runnable-track {
+  height: 2px;
+  border-radius: var(--r-full);
+  background: linear-gradient(
+    to right,
+    var(--surface-3) var(--from),
+    var(--gold) var(--from),
+    var(--gold) var(--to),
+    var(--surface-3) var(--to)
+  );
+}
+
+.dial__range::-moz-range-track {
+  height: 2px;
+  border-radius: var(--r-full);
+  background: linear-gradient(
+    to right,
+    var(--surface-3) var(--from),
+    var(--gold) var(--from),
+    var(--gold) var(--to),
+    var(--surface-3) var(--to)
+  );
+}
+
+.dial__range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -8px;
+  border-radius: var(--r-full);
+  background: var(--bg);
+  border: 1.5px solid var(--gold);
+  box-shadow: 0 0 0 6px transparent;
+  transition: box-shadow var(--d-instant) var(--ease-out);
+}
+
+.dial__range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--r-full);
+  background: var(--bg);
+  border: 1.5px solid var(--gold);
+}
+
+.dial__range:active::-webkit-slider-thumb {
+  box-shadow: 0 0 0 6px var(--gold-glow);
+}
+
+.dial__range:focus-visible {
+  outline: none;
+}
+
+.dial__range:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--gold);
+}
+
+/* -- curves ------------------------------------------------------- */
+
+.curves {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.curves__chans {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.curves__chans button {
+  appearance: none;
+  font: inherit;
+  font-size: var(--t-micro);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  position: relative;
+  min-width: 44px;
+  min-height: 36px;
+  padding-inline: 10px;
+  color: var(--ink-3);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+
+.curves__chans button[aria-selected="true"] {
+  color: var(--ink);
+  border-color: var(--gold);
+}
+
+.curves__chans [data-ch="r"][aria-selected="true"] {
+  color: rgb(230 110 98);
+}
+.curves__chans [data-ch="g"][aria-selected="true"] {
+  color: rgb(110 190 128);
+}
+.curves__chans [data-ch="b"][aria-selected="true"] {
+  color: rgb(110 150 230);
+}
+
+.curves__dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 4px;
+  height: 4px;
+  border-radius: var(--r-full);
+  background: var(--gold);
+}
+
+.curves__chans .curves__reset {
+  margin-left: auto;
+  border: 0;
+  font-weight: 500;
+  letter-spacing: 0;
+  font-size: var(--t-small);
+}
+
+.curves__chans .curves__reset:hover:not(:disabled) {
+  color: var(--gold);
+}
+
+.curves__chans .curves__reset:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.curves__box {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 1;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  /* the box is an editing surface: a finger on it bends the curve */
+  touch-action: none;
+  cursor: crosshair;
+  overflow: visible;
+}
+
+.curves__back {
+  fill: var(--surface-3);
+  opacity: 0.6;
+}
+
+.curves__grid line {
+  stroke: var(--line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.curves__diag {
+  stroke: var(--line-strong);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  vector-effect: non-scaling-stroke;
+}
+
+.curves__line {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.75;
+  vector-effect: non-scaling-stroke;
+}
+
+.curves__box[data-ch="r"] .curves__line {
+  stroke: rgb(230 110 98);
+}
+.curves__box[data-ch="g"] .curves__line {
+  stroke: rgb(110 190 128);
+}
+.curves__box[data-ch="b"] .curves__line {
+  stroke: rgb(110 150 230);
+}
+
+.curves__ghost {
+  fill: none;
+  stroke-width: 1;
+  opacity: 0.35;
+  vector-effect: non-scaling-stroke;
+}
+.curves__ghost[data-ch="master"] {
+  stroke: var(--gold);
+}
+.curves__ghost[data-ch="r"] {
+  stroke: rgb(230 110 98);
+}
+.curves__ghost[data-ch="g"] {
+  stroke: rgb(110 190 128);
+}
+.curves__ghost[data-ch="b"] {
+  stroke: rgb(110 150 230);
+}
+
+.curves__hit {
+  fill: transparent;
+  cursor: grab;
+}
+
+.curves__pt {
+  fill: var(--bg);
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+  cursor: grab;
+  transition: r var(--d-instant) var(--ease-out);
+}
+
+.curves__pt[data-active],
+.curves__pt:focus-visible {
+  fill: var(--gold);
+  outline: none;
+}
+
+/* -- actions ------------------------------------------------------ */
+
+.grade__acts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.grade__row {
+  display: flex;
+  gap: 8px;
+}
+
+.grade__row .btn {
+  flex: 1;
+}
+
+.grade__row .btn--quiet {
+  flex: 0 0 auto;
+}
+
+.grade__row--quiet {
+  flex-wrap: wrap;
+  gap: 2px 6px;
+  margin-left: -8px;
+}
+
+.grade__row .lib__act:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.grade__row .lib__act:disabled:hover {
+  color: var(--ink-3);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.grade__notice {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+/* -- side by side from tablet up ---------------------------------- */
+
+@media (min-width: 900px) {
+  .grade:not(.grade--empty) {
+    flex-direction: row;
+    align-items: stretch;
+    height: calc(100dvh - 56px);
+  }
+
+  .grade__stage {
+    flex: 1;
+    min-width: 0;
+    padding: 22px 24px;
+    justify-content: center;
+    overflow-y: auto;
+  }
+
+  .grade__frame {
+    --h: calc(100dvh - 56px - 200px);
+  }
+
+  .grade__looks {
+    margin-inline: -22px;
+    padding-inline: 22px;
+  }
+
+  .grade__panel {
+    flex: 0 0 clamp(340px, 30vw, 420px);
+    overflow-y: auto;
+    padding: 20px 22px 28px;
+    border-left: 1px solid var(--line);
+  }
+
+  .grade__acts {
+    position: sticky;
+    bottom: -28px;
+    margin-bottom: -28px;
+    padding-bottom: 28px;
+    background: var(--bg);
+  }
+}

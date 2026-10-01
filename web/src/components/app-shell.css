@@ -1,0 +1,479 @@
+/* ------------------------------------------------------------------
+   App shell — bottom tabs on a phone, a left rail from tablet up.
+   ------------------------------------------------------------------ */
+
+.app {
+  min-height: 100dvh;
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "bar"
+    "main"
+    "nav";
+}
+
+/* -- bar --------------------------------------------------------- */
+
+.app__bar {
+  grid-area: bar;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 52px;
+  padding-inline: 16px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+/* On a narrow phone the wordmark and the controls are the whole budget. */
+@media (max-width: 479px) {
+  .app__where {
+    display: none;
+  }
+}
+
+.app__mark {
+  text-decoration: none;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: var(--gold);
+}
+
+.app__where {
+  color: var(--ink-3);
+  flex: 1;
+  padding-left: 2px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app__tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* -- segmented ---------------------------------------------------- */
+
+.seg {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+}
+
+.seg button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: var(--t-micro);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  min-height: 30px;
+  padding-inline: 9px;
+  border-radius: var(--r-full);
+  cursor: pointer;
+  transition: color var(--d-instant) var(--ease-out),
+    background var(--d-instant) var(--ease-out);
+}
+
+.seg button.my {
+  letter-spacing: 0;
+  font-weight: 700;
+}
+
+.seg button:hover {
+  color: var(--ink);
+}
+
+.seg button[aria-pressed="true"] {
+  color: var(--gold-ink);
+  background: var(--gold);
+}
+
+.seg--icon button {
+  min-width: 30px;
+  padding-inline: 0;
+}
+
+/* -- nav: bottom tabs on a phone --------------------------------- */
+
+.app__nav {
+  grid-area: nav;
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.app__navbtn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  font: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 56px;
+  padding: 8px 4px;
+  cursor: pointer;
+  position: relative;
+  transition: color var(--d-instant) var(--ease-out);
+}
+
+.app__navbtn svg {
+  width: 21px;
+  height: 21px;
+}
+
+.app__navbtn span {
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.app__navbtn span.my {
+  font-size: 0.6875rem;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1;
+}
+
+.app__navbtn:hover {
+  color: var(--ink-2);
+}
+
+.app__navbtn[aria-current="page"] {
+  color: var(--gold);
+}
+
+/* the one gold hairline that says where you are */
+.app__navbtn[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 26px;
+  height: 1px;
+  background: var(--gold);
+  transform: translateX(-50%);
+  box-shadow: 0 0 12px var(--gold-glow);
+}
+
+/* -- main -------------------------------------------------------- */
+
+.app__main {
+  grid-area: main;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* -- rail: the whole map, from tablet up ------------------------- */
+
+.app__rail {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .app {
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 96px 1fr;
+    grid-template-areas:
+      "bar bar"
+      "nav main";
+  }
+
+  .app__bar {
+    padding-inline: 20px;
+    height: 56px;
+  }
+
+  .app__nav {
+    display: none;
+  }
+
+  .app__rail {
+    grid-area: nav;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: sticky;
+    top: 56px;
+    align-self: start;
+    height: calc(100dvh - 56px);
+    overflow-y: auto;
+    padding: 14px 8px 24px;
+    border-right: 1px solid var(--line);
+    scrollbar-width: none;
+  }
+
+  .app__rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rail__grp {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .rail__label {
+    margin: 0 0 6px;
+    padding-inline: 8px;
+    color: var(--ink-3);
+    font-size: 0.5625rem;
+  }
+
+  .rail__label.my {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .rail__btn {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--ink-3);
+    font: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    min-height: 58px;
+    padding: 8px 2px;
+    border-radius: var(--r-md);
+    cursor: pointer;
+    position: relative;
+    transition: color var(--d-instant) var(--ease-out),
+      background var(--d-instant) var(--ease-out);
+  }
+
+  .rail__btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .rail__btn span {
+    font-size: 0.5625rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .rail__btn span.my {
+    font-size: 0.625rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .rail__btn:hover {
+    color: var(--ink-2);
+    background: var(--surface);
+  }
+
+  .rail__btn[aria-current="page"] {
+    color: var(--gold);
+    background: var(--surface);
+  }
+
+  .rail__btn[aria-current="page"]::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -8px;
+    width: 1px;
+    height: 22px;
+    background: var(--gold);
+    transform: translateY(-50%);
+    box-shadow: 0 0 12px var(--gold-glow);
+  }
+
+  /* still being built */
+  .rail__dot {
+    position: absolute;
+    top: 9px;
+    right: 12px;
+    width: 4px;
+    height: 4px;
+    border-radius: var(--r-full);
+    background: var(--ink-3);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Tier marks
+   ------------------------------------------------------------------ */
+
+.tier {
+  display: inline-block;
+  font-size: 0.5625rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 3px 5px;
+  margin-left: 8px;
+  border-radius: var(--r-xs);
+  vertical-align: 0.12em;
+  border: 1px solid var(--line-strong);
+  color: var(--gold);
+}
+
+.tier[data-tier="device"] {
+  color: var(--ink-2);
+  border-color: var(--line);
+}
+
+.tier[data-tier="soon"] {
+  color: var(--ink-3);
+  border-color: var(--line);
+}
+
+/* ------------------------------------------------------------------
+   The map — everything, on a phone
+   ------------------------------------------------------------------ */
+
+.map {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  display: flex;
+  align-items: flex-end;
+}
+
+.map__sheet {
+  width: 100%;
+  max-height: 88dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  border-top: 1px solid var(--gold);
+  box-shadow: 0 -1px 32px var(--gold-glow);
+  animation: map-in var(--d-base) var(--ease-out) both;
+}
+
+@keyframes map-in {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+}
+
+.map__close {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  cursor: pointer;
+  flex: none;
+}
+
+.map__close span {
+  display: block;
+  width: 34px;
+  height: 3px;
+  border-radius: var(--r-full);
+  background: var(--gold);
+}
+
+.map__scroll {
+  overflow-y: auto;
+  padding: 4px 16px calc(24px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.map__label {
+  margin: 0 0 8px;
+  color: var(--ink-3);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.map__item {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: var(--ink-2);
+  display: flex;
+  gap: 14px;
+  width: 100%;
+  text-align: left;
+  padding: 12px 4px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: color var(--d-instant) var(--ease-out),
+    background var(--d-instant) var(--ease-out);
+}
+
+.map__item:hover {
+  background: var(--surface);
+}
+
+.map__item svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  margin-top: 3px;
+  color: var(--ink-3);
+}
+
+.map__item[aria-current="page"] {
+  color: var(--ink);
+}
+
+.map__item[aria-current="page"] svg {
+  color: var(--gold);
+}
+
+.map__text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.map__name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.map__blurb {
+  color: var(--ink-3);
+}
+
+@media (min-width: 768px) {
+  .map {
+    display: none;
+  }
+}

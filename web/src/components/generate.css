@@ -1,0 +1,189 @@
+/* ------------------------------------------------------------------
+   Generate — the premium button, its seed, and the wait.
+   ------------------------------------------------------------------ */
+
+.gen {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gen__row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.gen__go {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.gen__go:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.gen__tier {
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  padding: 3px 6px;
+  border: 1px solid currentColor;
+  border-radius: var(--r-xs);
+  opacity: 0.8;
+}
+
+.gen__seed {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--bg-sunken);
+  color: var(--ink-3);
+}
+
+.gen__seed input {
+  width: 7ch;
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.gen__seed input:focus {
+  outline: none;
+  color: var(--gold);
+}
+
+.gen__seed button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-full);
+  cursor: pointer;
+  font-size: 0.9375rem;
+}
+
+.gen__seed button:hover {
+  color: var(--gold);
+}
+
+.gen__wait {
+  height: 2px;
+  background: var(--surface-3);
+  border-radius: var(--r-full);
+  overflow: hidden;
+}
+
+.gen__wait span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold), var(--gold-soft));
+  transform-origin: left;
+  transition: transform 120ms linear;
+}
+
+.gen__msg {
+  margin: 0;
+  color: var(--ink-2);
+  padding: 10px 12px;
+  border-left: 1px solid var(--gold);
+  background: var(--gold-glow);
+  border-radius: 0 var(--r-xs) var(--r-xs) 0;
+}
+
+.gen__msg--err {
+  border-left-color: var(--err);
+  background: transparent;
+}
+
+.gen__results {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.gen__result {
+  appearance: none;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  background: #000;
+  cursor: pointer;
+  aspect-ratio: 1;
+}
+
+.gen__result img,
+.gen__result video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gen__result[aria-checked="true"] {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+
+/* -- a prompt dock sitting inside a room's panel ------------------
+   Studio's dock is a column of its own; in the fix rooms it is one
+   block among the controls, and it folds at every width. */
+
+.inset-dock .dock {
+  position: static;
+  flex: none;
+  height: auto;
+  max-height: 64dvh;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  box-shadow: none;
+  background: var(--surface);
+}
+
+.inset-dock .dock:not([data-open]) {
+  max-height: 46px;
+  overflow: hidden;
+}
+
+.inset-dock .dock__grab {
+  pointer-events: auto;
+  cursor: pointer;
+  border-bottom: 0;
+}
+
+.inset-dock .dock__body {
+  padding: 12px 14px 16px;
+}
+
+.inset-dock .dock__out {
+  max-height: 30dvh;
+}
+
+/* -- results: the chosen one against the photograph it came from ---- */
+
+.gen__out {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gen__compare .reveal {
+  background: #000;
+}
+
+.gen__comparebox {
+  width: 100%;
+  margin-inline: auto;
+}

@@ -1,0 +1,406 @@
+/* ------------------------------------------------------------------
+   The Reveal — signature interaction styles
+   ------------------------------------------------------------------ */
+
+.reveal {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--bg-sunken);
+  border-radius: var(--r-md);
+  cursor: ew-resize;
+  user-select: none;
+  -webkit-user-select: none;
+  /* let the page scroll vertically through the control */
+  touch-action: pan-y;
+}
+
+@media (min-width: 900px) {
+  .reveal {
+    aspect-ratio: 3 / 2;
+  }
+}
+
+.reveal__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.reveal[data-fit="contain"] .reveal__img {
+  object-fit: contain;
+}
+
+.reveal__clip {
+  position: absolute;
+  inset: 0;
+  will-change: clip-path;
+}
+
+/* crossfade when the stage changes under the handle */
+.reveal__img--stage {
+  animation: reveal-stage-in var(--d-quick) var(--ease-out) both;
+}
+
+@keyframes reveal-stage-in {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* -- ticks ------------------------------------------------------- */
+
+.reveal__ticks {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 100%;
+  pointer-events: none;
+}
+
+.reveal__tick {
+  position: absolute;
+  bottom: 0;
+  width: 1px;
+  height: 10px;
+  background: rgb(255 255 255 / 0.28);
+  transform: translateX(-0.5px);
+  transition: height var(--d-quick) var(--ease-out),
+    background var(--d-quick) var(--ease-out);
+}
+
+.reveal__tick[data-passed] {
+  height: 18px;
+  background: rgb(255 255 255 / 0.7);
+}
+
+/* -- handle ------------------------------------------------------ */
+
+.reveal__handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  pointer-events: none;
+  will-change: left;
+}
+
+.reveal[data-dragging] .reveal__handle,
+.reveal[data-dragging] .reveal__clip {
+  transition: none;
+}
+
+.reveal:not([data-dragging]) .reveal__handle,
+.reveal:not([data-dragging]) .reveal__clip {
+  transition: left var(--d-base) var(--ease-out),
+    clip-path var(--d-base) var(--ease-out);
+}
+
+.reveal__line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  transform: translateX(-0.5px);
+  background: rgb(255 255 255 / 0.85);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.18);
+}
+
+.reveal__grip {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+  border-radius: var(--r-full);
+  background: rgb(255 255 255 / 0.1);
+  border: 1px solid rgb(255 255 255 / 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: transform var(--d-quick) var(--ease-out),
+    background var(--d-quick) var(--ease-out);
+}
+
+.reveal[data-dragging] .reveal__grip {
+  transform: translate(-50%, -50%) scale(0.88);
+  background: rgb(255 255 255 / 0.2);
+}
+
+.reveal:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.reveal:focus-visible .reveal__grip {
+  border-color: var(--accent);
+}
+
+/* -- floating stage label ---------------------------------------- */
+
+.reveal__label {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, calc(-50% - 46px));
+  padding: 6px 10px;
+  white-space: nowrap;
+  color: #fff;
+  background: rgb(0 0 0 / 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--r-xs);
+  opacity: 0;
+  transition: opacity var(--d-quick) var(--ease-out);
+}
+
+.reveal__label[data-visible] {
+  opacity: 1;
+}
+
+/* -- caption: the pipeline, spelled out -------------------------- */
+
+.reveal__caption {
+  margin-top: 14px;
+  color: var(--ink-3);
+}
+
+.reveal__stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 10px;
+}
+
+.reveal__stages > span {
+  position: relative;
+  padding-inline-end: 10px;
+  transition: color var(--d-quick) var(--ease-out);
+}
+
+.reveal__stages > span::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 3px;
+  height: 3px;
+  border-radius: var(--r-full);
+  background: currentColor;
+  opacity: 0.35;
+  transform: translateY(-50%);
+}
+
+.reveal__stages > span:last-child::after {
+  display: none;
+}
+
+.reveal__stages > span[data-on] {
+  color: var(--ink);
+}
+
+/* -- layers move together when zoomed ------------------------------- */
+
+.reveal__layer {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.reveal[data-zoomable] {
+  touch-action: none;
+}
+
+.reveal[data-zoomed] {
+  cursor: grab;
+}
+
+.reveal[data-panning] {
+  cursor: grabbing;
+}
+
+/* comparing: name both sides, permanently */
+.reveal__side {
+  position: absolute;
+  top: 12px;
+  padding: 5px 9px;
+  color: #fff;
+  background: rgb(0 0 0 / 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--r-xs);
+  pointer-events: none;
+  transition: opacity var(--d-quick) var(--ease-out);
+}
+
+.reveal__side.my {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.reveal__side--l {
+  left: 12px;
+}
+
+.reveal__side--r {
+  right: 12px;
+}
+
+.reveal__side[data-hidden] {
+  opacity: 0;
+}
+
+.reveal__grip {
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+
+.reveal__grip svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* -- open full screen ----------------------------------------------- */
+
+.reveal__expand {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 0.35);
+  border-radius: var(--r-full);
+  background: rgb(0 0 0 / 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  cursor: zoom-in;
+  transition: background var(--d-quick) var(--ease-out), border-color var(--d-quick) var(--ease-out);
+}
+
+.reveal__expand:hover {
+  background: rgb(0 0 0 / 0.7);
+  border-color: #f0c75e;
+  color: #f0c75e;
+}
+
+.reveal__expand svg {
+  width: 18px;
+  height: 18px;
+}
+
+.reveal__zoom {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgb(255 255 255 / 0.25);
+  border-radius: var(--r-full);
+  background: rgb(0 0 0 / 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  overflow: hidden;
+}
+
+.reveal__zoom button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  min-width: 40px;
+  height: 38px;
+  font: inherit;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.reveal__zoom button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.reveal__zoom .reveal__pct {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  min-width: 58px;
+  color: #f0c75e;
+}
+
+.reveal__caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.reveal__pos {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+
+/* -- the full-screen viewer ----------------------------------------- */
+
+.rviewer {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  flex-direction: column;
+  background: rgb(5 5 6 / 0.97);
+}
+
+.rviewer__bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  color: #9c978e;
+}
+
+.rviewer__hint {
+  flex: 1;
+  min-width: 0;
+}
+
+.rviewer__close {
+  appearance: none;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: var(--r-full);
+  background: transparent;
+  color: #f2efe9;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.rviewer__stage {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 0 12px 16px;
+}
+
+.rviewer__frame {
+  --h: calc(100dvh - 120px);
+  width: min(100%, calc(var(--h) * var(--ar)));
+}
+
+.rviewer .reveal {
+  background: #000;
+}
+
+.rviewer .reveal__caption {
+  color: #9c978e;
+}

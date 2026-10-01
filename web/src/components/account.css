@@ -1,0 +1,211 @@
+/* ------------------------------------------------------------------
+   Account — a quiet button in the bar, a sheet when it is pressed.
+   ------------------------------------------------------------------ */
+
+.acct {
+  appearance: none;
+  font: inherit;
+  font-size: var(--t-small);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  max-width: 140px;
+  padding: 0 12px;
+  color: var(--gold);
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-full);
+  cursor: pointer;
+}
+
+.acct__icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+/* a phone's bar has room for the icon only */
+@media (max-width: 639px) {
+  .acct {
+    padding: 0 9px;
+  }
+
+  .acct__label {
+    display: none;
+  }
+}
+
+.acct:hover {
+  border-color: var(--gold);
+}
+
+.acct__name {
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.acct__dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-full);
+  background: var(--ink-3);
+}
+
+.acct__dot[data-member] {
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold);
+}
+
+.acct-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: end center;
+  background: rgb(0 0 0 / 0.6);
+}
+
+.acct-sheet__card {
+  width: 100%;
+  max-width: 440px;
+  padding: 22px 20px calc(24px + env(safe-area-inset-bottom));
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-bottom: 0;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  box-shadow: var(--e3);
+}
+
+@media (min-width: 640px) {
+  .acct-sheet {
+    place-items: center;
+  }
+
+  .acct-sheet__card {
+    border-bottom: 1px solid var(--line-strong);
+    border-radius: var(--r-lg);
+  }
+}
+
+.acct-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.acct-form .field {
+  min-height: 46px;
+}
+
+.acct-form__mode {
+  align-self: flex-start;
+}
+
+.acct-form__err {
+  margin: 0;
+  color: var(--err);
+}
+
+.acct-me {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.acct-me > p:first-child {
+  margin: 0;
+  color: var(--gold);
+}
+
+.acct-me h2 {
+  margin: 0;
+}
+
+.acct-me__login {
+  margin: 0;
+  color: var(--ink-3);
+}
+
+.acct-me__tier {
+  margin: 8px 0 14px;
+  color: var(--ink-2);
+}
+
+.acct-me__tier[data-member] {
+  color: var(--gold);
+}
+
+/* -- Firebase sheet -------------------------------------------------- */
+
+.acct-form__kicker {
+  margin: 0;
+  color: var(--gold);
+}
+
+.acct-google {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  font: inherit;
+  font-weight: 800;
+  font-size: var(--t-small);
+  color: #1f1f1f;
+  background: #ffffff;
+  border: 1px solid #dadce0;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+
+.acct-google:hover {
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.25);
+}
+
+.acct-google svg {
+  width: 18px;
+  height: 18px;
+}
+
+.acct-google:disabled {
+  opacity: 0.6;
+}
+
+.acct-or {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink-3);
+}
+
+.acct-or::before,
+.acct-or::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.acct-form__step {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.acct-form__step .lib__act {
+  align-self: flex-start;
+  margin-left: -8px;
+}
+
+.acct-code {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 1.4rem;
+  letter-spacing: 0.4em;
+  text-align: center;
+}

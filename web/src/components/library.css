@@ -1,0 +1,350 @@
+/* ------------------------------------------------------------------
+   Library — saved prompts on the left, one version graph on the right.
+   ------------------------------------------------------------------ */
+
+.lib {
+  display: flex;
+  flex-direction: column;
+}
+
+.lib__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.lib__head h2 {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.lib__head--detail h2 {
+  flex: 1;
+  min-width: 0;
+  color: var(--ink);
+}
+
+.lib__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lib__act {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  cursor: pointer;
+  min-height: 36px;
+  padding-inline: 8px;
+  border-radius: var(--r-xs);
+  flex: none;
+  transition: color var(--d-instant) var(--ease-out);
+}
+
+.lib__act:hover {
+  color: var(--gold);
+}
+
+.lib__act--warn:hover {
+  color: var(--err);
+}
+
+.lib__rename {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+}
+
+.lib__rename .field {
+  flex: 1;
+  min-height: 40px;
+  resize: none;
+}
+
+.lib__hint,
+.lib__note {
+  margin: 0 0 14px;
+  color: var(--ink-3);
+}
+
+/* -- entry cards -------------------------------------------------- */
+
+.lib__list {
+  padding: 18px 16px 20px;
+}
+
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card {
+  appearance: none;
+  font: inherit;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  color: var(--ink-2);
+  transition: border-color var(--d-instant) var(--ease-out),
+    background var(--d-instant) var(--ease-out);
+}
+
+.card:hover {
+  border-color: var(--line-strong);
+}
+
+.card[aria-current] {
+  border-color: var(--gold);
+  background: var(--surface-2);
+}
+
+.card__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.card__title {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card__src {
+  color: var(--gold);
+  flex: none;
+}
+
+.card__line {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.6875rem;
+  line-height: 1.6;
+  color: var(--ink-3);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card__meta {
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+}
+
+/* -- version graph ------------------------------------------------ */
+
+.lib__detail {
+  padding: 18px 16px 96px;
+  border-top: 1px solid var(--line);
+}
+
+.vers {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ver {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  position: relative;
+}
+
+/* a branch is drawn, not just indented */
+.ver[style*="margin-inline-start"]::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 22px;
+  width: 8px;
+  height: 1px;
+  background: var(--line-strong);
+}
+
+.ver__pick {
+  appearance: none;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  margin-top: 2px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--gold-ink);
+  font: inherit;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background var(--d-instant) var(--ease-out);
+}
+
+.ver__pick[aria-pressed="true"] {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.ver__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ver__top {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ver__label {
+  font-size: var(--t-small);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.ver__head {
+  color: var(--gold);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-xs);
+  padding: 3px 5px;
+  line-height: 1;
+}
+
+.ver__meta {
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+}
+
+.ver__text {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.6875rem;
+  line-height: 1.6;
+  color: var(--ink-3);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ver__acts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: none;
+}
+
+/* -- diff --------------------------------------------------------- */
+
+.diff {
+  margin-top: 18px;
+  border: 1px solid var(--gold);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: 0 0 24px var(--gold-glow);
+}
+
+.diff__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 14px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-2);
+}
+
+.diff__count {
+  display: flex;
+  gap: 10px;
+}
+
+.diff__count em {
+  font-style: normal;
+}
+
+.diff__body {
+  margin: 0;
+  padding: 14px;
+  background: var(--bg-sunken);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  line-height: 1.85;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 40dvh;
+  overflow: auto;
+}
+
+.d-add {
+  color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 16%, transparent);
+  border-radius: var(--r-xs);
+}
+
+.d-del {
+  color: var(--err);
+  background: color-mix(in srgb, var(--err) 14%, transparent);
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--err) 60%, transparent);
+  border-radius: var(--r-xs);
+}
+
+/* -- two columns from tablet up ----------------------------------- */
+
+@media (min-width: 900px) {
+  .lib {
+    flex-direction: row;
+    align-items: stretch;
+    height: calc(100dvh - 56px);
+  }
+
+  .lib__list {
+    flex: 0 0 clamp(300px, 30vw, 400px);
+    overflow-y: auto;
+    padding: 22px 20px 40px;
+    border-right: 1px solid var(--line);
+  }
+
+  .lib__detail {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    padding: 22px 28px 40px;
+    border-top: 0;
+  }
+}

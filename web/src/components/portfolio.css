@@ -1,0 +1,239 @@
+/* ------------------------------------------------------------------
+   Portfolio — the profile on one side, the real page on the other.
+   ------------------------------------------------------------------ */
+
+.port {
+  display: flex;
+  flex-direction: column;
+}
+
+.port__edit {
+  padding: 16px 16px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.port__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.port__form .field {
+  min-height: 42px;
+  resize: vertical;
+}
+
+.port__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.port__handle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--gold);
+}
+
+.port__handle .field {
+  flex: 1;
+}
+
+.port__works {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pwork {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.pwork img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: var(--r-xs);
+  grid-row: span 2;
+}
+
+.pwork__text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pwork__text .field {
+  min-height: 36px;
+  padding: 7px 10px;
+}
+
+.pwork__acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 2px;
+  margin-left: -8px;
+}
+
+.pwork__acts [aria-pressed="true"] {
+  color: var(--gold);
+}
+
+.pwork__acts .lib__act:disabled {
+  opacity: 0.35;
+}
+
+.port__live {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--gold);
+  word-break: break-all;
+}
+
+/* -- the page, live ----------------------------------------------- */
+
+.port__view {
+  padding: 0 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.port__bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.port__url {
+  flex: 1;
+  min-width: 0;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--gold);
+  padding: 8px 12px;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.port__frame {
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: #000;
+  margin-inline: auto;
+  width: 100%;
+  box-shadow: var(--e3);
+}
+
+.port__frame[data-device="phone"] {
+  max-width: 390px;
+  height: 720px;
+  border-radius: 28px;
+}
+
+.port__frame[data-device="desktop"] {
+  height: 640px;
+}
+
+.port__frame iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.port__card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--ink-3);
+  max-width: 520px;
+  margin-inline: auto;
+  width: 100%;
+}
+
+/* a share card, in the neutral grey every feed draws it in */
+.fbcard {
+  border: 1px solid #3a3b3c;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #242526;
+  color: #e4e6eb;
+  font-family: system-ui, sans-serif;
+}
+
+.fbcard img,
+.fbcard__ph {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1200 / 630;
+  object-fit: cover;
+  background: #18191a;
+}
+
+.fbcard__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px 12px;
+}
+
+.fbcard__host {
+  font-size: 12px;
+  color: #b0b3b8;
+}
+
+.fbcard__title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.fbcard__desc {
+  font-size: 14px;
+  color: #b0b3b8;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (min-width: 900px) {
+  .port {
+    flex-direction: row;
+    height: calc(100dvh - 56px);
+  }
+
+  .port__edit {
+    flex: 0 0 clamp(340px, 32vw, 440px);
+    overflow-y: auto;
+    padding: 20px 22px 32px;
+    border-right: 1px solid var(--line);
+  }
+
+  .port__view {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    padding: 20px 28px 40px;
+  }
+
+  .port__frame[data-device="desktop"] {
+    height: calc(100dvh - 56px - 160px);
+  }
+}

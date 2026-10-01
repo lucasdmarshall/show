@@ -1,0 +1,382 @@
+/* ------------------------------------------------------------------
+   Batch — the look and the series summary above, the contact sheet
+   below, the export pinned to the bottom edge.
+   ------------------------------------------------------------------ */
+
+.batch {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.batch--empty {
+  justify-content: center;
+}
+
+.batch--empty > .batch__progress {
+  margin: 0 16px 16px;
+}
+
+.batch__top {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px 16px 0;
+}
+
+.batch__looks {
+  display: flex;
+  flex: none;
+  gap: 6px;
+  overflow-x: auto;
+  margin-inline: -16px;
+  padding: 2px 16px 4px;
+  scrollbar-width: none;
+}
+
+.batch__looks::-webkit-scrollbar {
+  display: none;
+}
+
+.batch__looks .chip {
+  flex: none;
+  white-space: nowrap;
+}
+
+.batch__summary {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.batch__summary > p {
+  margin: 0;
+  color: var(--ink);
+}
+
+.batch__measuring {
+  color: var(--ink-3) !important;
+}
+
+.batch__switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.batch__switch input {
+  accent-color: var(--gold);
+  width: 16px;
+  height: 16px;
+}
+
+/* -- scatter ------------------------------------------------------ */
+
+.scatter {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scatter svg {
+  width: 100%;
+  height: auto;
+  max-height: 140px;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+
+.scatter__box {
+  fill: var(--gold-glow);
+  stroke: var(--line-strong);
+  stroke-dasharray: 3 3;
+  vector-effect: non-scaling-stroke;
+}
+
+.scatter__axis {
+  stroke: var(--line);
+  vector-effect: non-scaling-stroke;
+}
+
+.scatter__dot {
+  fill: var(--ink-2);
+  cursor: pointer;
+  transition: cx var(--d-base) var(--ease-out), cy var(--d-base) var(--ease-out);
+}
+
+.scatter__dot[data-off] {
+  fill: var(--gold);
+}
+
+.scatter figcaption {
+  display: flex;
+  justify-content: space-between;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+}
+
+/* -- filters ------------------------------------------------------ */
+
+.batch__filters {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.batch__filter {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  min-height: 42px;
+  padding-inline: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+}
+
+.batch__filter[aria-selected="true"] {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+
+.batch__n {
+  font-size: var(--t-micro);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+
+.batch__honest {
+  margin: 14px 16px 0;
+  color: var(--ink-3);
+  max-width: 64ch;
+}
+
+/* -- contact sheet ------------------------------------------------ */
+
+.frames {
+  list-style: none;
+  margin: 0;
+  padding: 14px 16px 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.frame {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: opacity var(--d-quick) var(--ease-out);
+}
+
+.frame[data-excluded] {
+  opacity: 0.35;
+}
+
+.frame__img {
+  appearance: none;
+  position: relative;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: #000;
+  overflow: hidden;
+  aspect-ratio: 3 / 2;
+  cursor: zoom-in;
+}
+
+.frame__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.frame__matched {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  padding: 3px 5px;
+  font-size: 0.5625rem;
+  color: var(--gold);
+  background: rgb(0 0 0 / 0.66);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-xs);
+}
+
+.frame__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.frame__name {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.6875rem;
+  color: var(--ink-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.frame__keep {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--gold);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-full);
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.frame__keep[aria-pressed="false"] {
+  color: var(--ink-3);
+}
+
+.frame__flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.frame__flags span {
+  font-size: 0.625rem;
+  line-height: 1;
+  padding: 4px 6px;
+  border-radius: var(--r-xs);
+  border: 1px solid var(--line-strong);
+  color: var(--gold);
+}
+
+.frame__flags span[data-kind="cull"] {
+  border-color: rgb(180 69 58 / 0.45);
+  color: var(--err);
+}
+
+/* -- export ------------------------------------------------------- */
+
+.batch__acts {
+  position: sticky;
+  bottom: 0;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  z-index: 4;
+}
+
+.batch__progress {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--ink-2);
+}
+
+/* -- one frame, large --------------------------------------------- */
+
+.bdetail {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgb(0 0 0 / 0.94);
+  display: flex;
+  flex-direction: column;
+  padding: 10px 16px 20px;
+  gap: 12px;
+}
+
+.bdetail__bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ink-2);
+}
+
+.bdetail__name {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--t-small);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bdetail__frame {
+  --h: calc(100dvh - 170px);
+  width: 100%;
+  max-width: calc(var(--h) * var(--ar));
+  margin: auto;
+}
+
+.bdetail__why {
+  margin: 0 auto;
+  color: var(--gold);
+  text-align: center;
+  max-width: 60ch;
+}
+
+@media (min-width: 900px) {
+  .batch__top {
+    padding: 20px 28px 0;
+    display: grid;
+    grid-template-columns: 1fr minmax(280px, 380px);
+    column-gap: 28px;
+    align-items: start;
+  }
+
+  .batch__looks {
+    grid-column: 1 / -1;
+    margin-inline: -28px;
+    padding-inline: 28px;
+  }
+
+  .scatter {
+    grid-row: 2 / span 2;
+    grid-column: 2;
+  }
+
+  .batch__filters {
+    grid-column: 1;
+    align-self: end;
+  }
+
+  .frames {
+    padding: 18px 28px 28px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .batch__honest {
+    margin-inline: 28px;
+  }
+
+  .batch__acts {
+    padding: 14px 28px;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .batch__acts .grade__row:first-of-type {
+    order: 2;
+    margin-left: auto;
+  }
+}

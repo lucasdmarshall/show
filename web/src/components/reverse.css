@@ -1,0 +1,223 @@
+/* ------------------------------------------------------------------
+   Reverse — a photograph in, a set of measurements out.
+   Shares the dock layout with Studio.
+   ------------------------------------------------------------------ */
+
+.rev {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* -- read state --------------------------------------------------- */
+
+.rev__panel {
+  padding: 18px 16px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.rev__frame {
+  flex: none;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 42dvh;
+}
+
+.rev__frame img {
+  max-height: 42dvh;
+  width: auto;
+  object-fit: contain;
+}
+
+.rev__palette {
+  display: flex;
+  flex: none;
+  height: 8px;
+  border-radius: var(--r-full);
+  overflow: hidden;
+}
+
+.rev__palette span {
+  flex: 1;
+}
+
+.rev__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--line);
+}
+
+.rev__head h2 {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.rev__again {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: var(--t-small);
+  color: var(--gold);
+  cursor: pointer;
+  padding: 4px 0;
+  min-height: 32px;
+}
+
+.rev__again:hover {
+  color: var(--gold-soft);
+}
+
+/* -- readings ----------------------------------------------------- */
+
+.reads {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.read {
+  appearance: none;
+  font: inherit;
+  width: 100%;
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: 92px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  padding: 8px 14px;
+  color: var(--ink-2);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: color var(--d-instant) var(--ease-out),
+    border-color var(--d-instant) var(--ease-out),
+    opacity var(--d-instant) var(--ease-out);
+}
+
+.read:hover:not(:disabled) {
+  border-color: var(--line-strong);
+}
+
+.read[aria-pressed="true"] {
+  color: var(--ink);
+  border-color: var(--gold);
+  box-shadow: inset 0 0 0 1px var(--gold-glow);
+}
+
+.read[aria-pressed="false"] {
+  opacity: 0.45;
+}
+
+.read:disabled {
+  cursor: default;
+  opacity: 0.8;
+}
+
+.read__grp {
+  color: var(--ink-3);
+}
+
+.read__grp.my {
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+.read__val {
+  font-size: var(--t-small);
+  font-weight: 500;
+}
+
+/* the number it came from, so it can be argued with */
+.read__measure {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.625rem;
+  color: var(--ink-3);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* -- what the device cannot read ---------------------------------- */
+
+.rev__missing {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.rev__missing > p:first-child {
+  margin: 0;
+  color: var(--ink-3);
+}
+
+.rev__missing-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rev__missing-list span {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  padding: 5px 10px;
+  border: 1px dashed var(--line);
+  border-radius: var(--r-xs);
+}
+
+.rev__missing-note {
+  margin: 0;
+  max-width: 52ch;
+  color: var(--ink-3);
+}
+
+.btn--quiet {
+  background: transparent;
+  color: var(--gold);
+  border-color: var(--line-strong);
+}
+
+.btn--quiet:hover {
+  background: var(--gold-glow);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.btn--quiet:active {
+  background: var(--gold-glow);
+  border-color: var(--gold-deep);
+}
+
+/* -- two columns from tablet up ----------------------------------- */
+
+@media (min-width: 900px) {
+  .rev--read {
+    flex-direction: row;
+    align-items: stretch;
+    height: calc(100dvh - 56px);
+  }
+
+  .rev--read .rev__panel {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    padding: 22px 28px 40px;
+  }
+}

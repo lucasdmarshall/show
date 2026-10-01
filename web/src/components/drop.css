@@ -1,0 +1,62 @@
+/* ------------------------------------------------------------------
+   DropZone — shared by Reverse and Grade.
+   ------------------------------------------------------------------ */
+
+.drop {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  margin: 16px;
+  padding: 48px 24px;
+  min-height: 58dvh;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-lg);
+  transition: border-color var(--d-quick) var(--ease-out),
+    background var(--d-quick) var(--ease-out);
+}
+
+.drop[data-dragging] {
+  border-color: var(--gold);
+  background: var(--gold-glow);
+}
+
+.drop__icon {
+  width: 34px;
+  height: 34px;
+  color: var(--gold);
+}
+
+.drop__title {
+  margin: 0;
+  color: var(--ink);
+}
+
+.drop__sub {
+  margin: 0;
+  max-width: 42ch;
+  color: var(--ink-3);
+}
+
+.drop .btn {
+  margin-top: 6px;
+}
+
+.drop__privacy {
+  margin: 2px 0 0;
+  color: var(--ink-3);
+}
+
+.drop__err {
+  margin: 0;
+  color: var(--err);
+}
+
+@media (min-width: 900px) {
+  .drop {
+    margin: 28px;
+  }
+}

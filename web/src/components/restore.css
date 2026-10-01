@@ -1,0 +1,34 @@
+/* ------------------------------------------------------------------
+   Restore — Grade's layout, plus the proof line and the premium half.
+   ------------------------------------------------------------------ */
+
+.restore__proof {
+  margin: 0;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.restore__proof[data-working] {
+  color: var(--gold);
+}
+
+.restore__results {
+  max-width: 520px;
+}
+
+.restore__premium {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line-strong);
+}
+
+/* on the desktop the export stays with the repair, not at the very end */
+@media (min-width: 900px) {
+  .restore .restore__acts {
+    position: static;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+}

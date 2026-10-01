@@ -1,0 +1,109 @@
+/* ------------------------------------------------------------------
+   Room — the premium rooms that start from a photograph and a wall of
+   choices: Background, Baby. Reverse's panel-and-dock layout.
+   ------------------------------------------------------------------ */
+
+.room .rev__panel {
+  gap: 26px;
+}
+
+.room__in {
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.room__photo {
+  appearance: none;
+  font: inherit;
+  aspect-ratio: 4 / 5;
+  width: 100%;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: var(--gold);
+  background: var(--surface);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.room__photo span {
+  padding: 8px;
+}
+
+.room__photo:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.room__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.room__read {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--ink);
+}
+
+.room__read > .t-micro {
+  color: var(--ink-3);
+  margin-bottom: 2px;
+}
+
+.room__ok {
+  color: var(--gold);
+}
+
+.room__hint {
+  margin: 0;
+  color: var(--ink-3);
+}
+
+/* -- time of day: the sky, live ----------------------------------- */
+
+.tod {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tod__sky {
+  display: block;
+  height: 44px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line);
+  background: linear-gradient(to bottom, var(--sky1), var(--sky2));
+  transition: background var(--d-base) var(--ease-out);
+}
+
+/* -- consent -------------------------------------------------------- */
+
+.consent {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.consent input {
+  accent-color: var(--gold);
+  margin-top: 4px;
+  flex: none;
+}
+
+.consent[data-on] {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}

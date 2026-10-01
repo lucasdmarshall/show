@@ -1,0 +1,175 @@
+/* ------------------------------------------------------------------
+   Photographs — image 1 to edit, references after it.
+   ------------------------------------------------------------------ */
+
+.prefs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prefs__why {
+  margin: -4px 0 0;
+  color: var(--ink-3);
+  max-width: 62ch;
+}
+
+.prefs__row {
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.prefs__refs {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.prefs__refs::-webkit-scrollbar {
+  display: none;
+}
+
+.pr-drop {
+  appearance: none;
+  font: inherit;
+  flex: none;
+  width: 96px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--gold);
+  background: var(--surface);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  text-align: center;
+  padding: 6px;
+  transition: border-color var(--d-quick) var(--ease-out), background var(--d-quick) var(--ease-out);
+}
+
+.pr-drop--big {
+  width: 112px;
+  height: 140px;
+  border-style: solid;
+  background:
+    radial-gradient(80% 60% at 50% 40%, var(--gold-glow), transparent),
+    var(--surface);
+}
+
+.pr-drop:hover,
+.pr-drop[data-over] {
+  border-color: var(--gold);
+  background: var(--gold-glow);
+}
+
+.pr-drop__plus {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.pr-drop .my {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.pr-card {
+  position: relative;
+  width: 96px;
+  height: 120px;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  background: #000;
+}
+
+.pr-card--base {
+  width: 112px;
+  height: 140px;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold-glow);
+}
+
+.pr-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pr-num {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 14px 6px 5px;
+  font-size: 0.5625rem;
+  letter-spacing: 0.08em;
+  color: #f0c75e;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.85), transparent);
+}
+
+.pr-x {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: var(--r-full);
+  background: rgb(0 0 0 / 0.65);
+  color: #f2efe9;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pr-ref {
+  flex: none;
+  width: 132px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pr-ref .pr-card {
+  width: 132px;
+}
+
+.pr-role,
+.pr-note {
+  width: 100%;
+  min-height: 32px;
+  padding: 4px 8px;
+  font: inherit;
+  font-size: 0.75rem;
+  color: var(--ink);
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+
+.pr-role {
+  color: var(--gold);
+  border-color: var(--line-strong);
+}
+
+.pr-role:focus,
+.pr-note:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.prefs__keep {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prefs__keep-label {
+  color: var(--ink-3);
+}
