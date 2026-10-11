@@ -31,6 +31,9 @@ import { Choices } from "./Choices";
 import { PromptDock } from "./PromptDock";
 import { Generate, Results } from "./Generate";
 import { AiTabs, type Way } from "./AiTabs";
+import { useIsPhone } from "@/lib/useIsPhone";
+import { MaybeBar, PromptBox } from "./PromptBox";
+
 import "./grade.css";
 
 /* The preview is graded at this size; export goes back to the file. */
@@ -273,6 +276,7 @@ export function Grade({ my }: { my: boolean }) {
     curves: HTMLCanvasElement;
   } | null>(null);
   const replaceInput = useRef<HTMLInputElement>(null);
+  const phone = useIsPhone();
 
   /* -- load ------------------------------------------------------ */
   const take = useCallback(
@@ -570,10 +574,14 @@ export function Grade({ my }: { my: boolean }) {
       >
         {way === "ai" ? (
           <>
+            {phone ? <PromptBox out={aiOut} my={my} /> : null}
             <Choices groups={AI_GRADE} selection={aiSel} onToggle={(g, o) => setAiSel(toggle(AI_GRADE, aiSel, g, o))} my={my} />
-            <div className="inset-dock">
-              <PromptDock out={aiOut} my={my} />
-            </div>
+            {phone ? null : (
+              <div className="inset-dock">
+                <PromptDock out={aiOut} my={my} />
+              </div>
+            )}
+            <MaybeBar phone={phone}>
             <Generate
               my={my}
               section="grade"
@@ -586,8 +594,10 @@ export function Grade({ my }: { my: boolean }) {
               onResults={(blobs, seed) => {
                 results?.urls.forEach((u) => URL.revokeObjectURL(u));
                 setResults({ blobs, seed, urls: blobs.map((b) => URL.createObjectURL(b)) });
+                if (phone) window.scrollTo({ top: 0, behavior: "smooth" });
               }}
             />
+            </MaybeBar>
             <div className="grade__row">
               {results ? (
                 <button

@@ -11,6 +11,9 @@ import { Reveal, type RevealLayer } from "./Reveal";
 import { DropZone } from "./DropZone";
 import { Amount, Choices, Grp } from "./Choices";
 import { PromptDock } from "./PromptDock";
+import { useIsPhone } from "@/lib/useIsPhone";
+import { MaybeBar, PromptBox } from "./PromptBox";
+
 import { Generate, Results } from "./Generate";
 import { AiTabs, type Way } from "./AiTabs";
 import "./grade.css";
@@ -110,6 +113,7 @@ export function Restore({ my }: { my: boolean }) {
   const gen = useRef(0);
   const prev = useRef<Stages | null>(null);
   const replace = useRef<HTMLInputElement>(null);
+  const phone = useIsPhone();
 
   const take = useCallback(
     async (f: File | null | undefined) => {
@@ -336,10 +340,14 @@ export function Restore({ my }: { my: boolean }) {
       <section className="grade__panel" aria-label={my ? "ထိန်းချုပ်မှု" : "Controls"}>
         {way === "ai" ? (
           <>
+            {phone ? <PromptBox out={out} my={my} /> : null}
             <Choices groups={groups} selection={sel} onToggle={(g, o) => setSel(toggle(BEYOND, sel, g, o))} my={my} />
-            <div className="inset-dock">
-              <PromptDock out={out} my={my} />
-            </div>
+            {phone ? null : (
+              <div className="inset-dock">
+                <PromptDock out={out} my={my} />
+              </div>
+            )}
+            <MaybeBar phone={phone}>
             <Generate
               my={my}
               section="restore"
@@ -349,8 +357,12 @@ export function Restore({ my }: { my: boolean }) {
               strength={strength}
               label={moving ? "Make it move" : "Restore with AI"}
               labelMy={moving ? "ရွေ့လာအောင် လုပ်မည်" : "AI နဲ့ ပြန်ကောင်းအောင် လုပ်မည်"}
-              onResults={takeResults}
+              onResults={(blobs, seed) => {
+                takeResults(blobs, seed);
+                if (phone) window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
             />
+            </MaybeBar>
             <div className="grade__row">
               {results ? (
                 <button

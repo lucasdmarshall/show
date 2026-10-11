@@ -18,6 +18,9 @@ import { keep } from "@/lib/vault";
 import { Reveal, type RevealLayer } from "./Reveal";
 import { Amount, Grp } from "./Choices";
 import { PromptDock } from "./PromptDock";
+import { useIsPhone } from "@/lib/useIsPhone";
+import { MaybeBar, PromptBox } from "./PromptBox";
+
 import { Generate, Results } from "./Generate";
 import "./grade.css";
 import "./harmonize.css";
@@ -191,6 +194,7 @@ export function Harmonize({ my }: { my: boolean }) {
   const gen = useRef(0);
   const prev = useRef<{ raw: string; out: string } | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+  const phone = useIsPhone();
 
   const takeScene = useCallback(async (f: File) => {
     const { data } = await readImage(f, PREVIEW);
@@ -548,6 +552,7 @@ export function Harmonize({ my }: { my: boolean }) {
       <section className="grade__panel" aria-label={my ? "ထိန်းချုပ်မှု" : "Controls"}>
         {tab === "ai" ? (
           <>
+            {phone ? <PromptBox out={out} my={my} /> : null}
             <Grp title="Where they stand" titleMy="ဘယ်နေရာ ထားမလဲ" my={my}>
               <div className="grp__opts">
                 <button type="button" className="chip" aria-pressed={!hand} onClick={() => setHand(false)}>
@@ -611,9 +616,12 @@ export function Harmonize({ my }: { my: boolean }) {
               onChange={(e) => setExtra(e.target.value)}
             />
 
-            <div className="inset-dock">
-              <PromptDock out={out} my={my} />
-            </div>
+            {phone ? null : (
+              <div className="inset-dock">
+                <PromptDock out={out} my={my} />
+              </div>
+            )}
+            <MaybeBar phone={phone}>
             <Generate
               my={my}
               section="harmonize"
@@ -627,8 +635,10 @@ export function Harmonize({ my }: { my: boolean }) {
                 results?.urls.forEach((u) => URL.revokeObjectURL(u));
                 setResults({ blobs, seed, urls: blobs.map((b) => URL.createObjectURL(b)) });
                 setChosen(0);
+                if (phone) window.scrollTo({ top: 0, behavior: "smooth" });
               }}
             />
+            </MaybeBar>
             {results ? (
               <div className="grade__row">
                 <button

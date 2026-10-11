@@ -4,6 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { analyze, NOT_MEASURED, type Analysis, type ReadingId } from "@/lib/analyze";
 import { compileParts } from "@/lib/compile";
 import { PromptDock } from "./PromptDock";
+import { useIsPhone } from "@/lib/useIsPhone";
+import { usePrompt } from "./usePrompt";
+import { I, ICON, MakeBar, PromptFrame } from "./PromptBox";
 import type { CreateSeed } from "./Studio";
 import { DropZone } from "./DropZone";
 import type { Snapshot } from "@/lib/library";
@@ -78,6 +81,10 @@ export function Reverse({ my, onSendToStudio, onSave, onImage }: Props) {
     [active, analysis],
   );
 
+  /* on a phone the prompt sits under the photograph and Make above the tabs */
+  const phone = useIsPhone();
+  const p = usePrompt(out, my);
+
   const toggle = (id: ReadingId) =>
     setOff((prev) => {
       const next = new Set(prev);
@@ -113,6 +120,8 @@ export function Reverse({ my, onSendToStudio, onSave, onImage }: Props) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={preview ?? ""} alt={my ? "ဖတ်ထားသော ဓာတ်ပုံ" : "The photograph being read"} />
         </div>
+
+        {phone ? <PromptFrame p={p} my={my} /> : null}
 
         <div className="rev__palette" aria-label={my ? "အရောင်စဉ်" : "Palette"}>
           {analysis.palette.map((c) => (
@@ -194,6 +203,28 @@ export function Reverse({ my, onSendToStudio, onSave, onImage }: Props) {
         </div>
       </section>
 
+      {phone ? (
+        onImage ? (
+          <MakeBar>
+            <button
+              type="button"
+              className="make-go"
+              disabled={!out.positive.trim()}
+              onClick={() =>
+                onImage({
+                  prompt: p.forImage ? p.forImage.prompt : out.positive,
+                  negative: p.forImage ? p.forImage.negative : out.negative,
+                  aspect: analysis.aspect,
+                  from: my ? "ပြန်ထုတ်" : "Reverse",
+                })
+              }
+            >
+              <I d={ICON.spark} />
+              <span className={my ? "my" : undefined}>{my ? "Image ထုတ်မည်" : "Make image"}</span>
+            </button>
+          </MakeBar>
+        ) : null
+      ) : (
       <PromptDock
         out={out}
         my={my}
@@ -222,6 +253,7 @@ export function Reverse({ my, onSendToStudio, onSave, onImage }: Props) {
             : undefined
         }
       />
+      )}
     </div>
   );
 }

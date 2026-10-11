@@ -13,6 +13,9 @@ import { keep } from "@/lib/vault";
 import { Choices, Grp, Amount } from "./Choices";
 import { Wall } from "./Wall";
 import { PromptDock } from "./PromptDock";
+import { useIsPhone } from "@/lib/useIsPhone";
+import { MakeBar, PromptBox } from "./PromptBox";
+
 import { Generate, Results } from "./Generate";
 import "./reverse.css";
 import "./room.css";
@@ -111,6 +114,7 @@ export function Background({ my, onGo }: { my: boolean; onGo?: (id: SectionId) =
   const [results, setResults] = useState<{ urls: string[]; blobs: Blob[]; seed: number } | null>(null);
   const [chosen, setChosen] = useState(0);
   const input = useRef<HTMLInputElement>(null);
+  const phone = useIsPhone();
 
   const take = useCallback(async (f: File | undefined) => {
     if (!f || !f.type.startsWith("image/")) return;
@@ -238,6 +242,14 @@ export function Background({ my, onGo }: { my: boolean; onGo?: (id: SectionId) =
           />
         </div>
 
+        {/* on a phone: what came back, then the prompt — before the choices */}
+        {phone ? (
+          <>
+            {results ? <Results urls={results.urls} chosen={chosen} onChoose={setChosen} my={my} before={plateOnly ? null : url} /> : null}
+            <PromptBox out={out} my={my} />
+          </>
+        ) : null}
+
         <Grp title="Backdrop wall" titleMy="နောက်ခံ နံရံ" my={my} aside={`${BACKDROPS.length}`}>
           <Wall
             items={BACKDROPS.map((b) => ({ ...b, detail: b.descriptor }))}
@@ -284,7 +296,7 @@ export function Background({ my, onGo }: { my: boolean; onGo?: (id: SectionId) =
           />
         </Grp>
 
-        {results ? <Results urls={results.urls} chosen={chosen} onChoose={setChosen} my={my} before={plateOnly ? null : url} /> : null}
+        {results && !phone ? <Results urls={results.urls} chosen={chosen} onChoose={setChosen} my={my} before={plateOnly ? null : url} /> : null}
 
         {onGo ? (
           <p className={`room__hint ${my ? "my" : "t-small"}`}>
@@ -296,21 +308,31 @@ export function Background({ my, onGo }: { my: boolean; onGo?: (id: SectionId) =
         ) : null}
       </section>
 
-      <PromptDock out={out} my={my}>
-        <Generate
-          my={my}
-          section="background"
-          out={out}
-          aspect={ar}
-          image={editing ? (cutout ?? file) : null}
-          strength={cutout ? 1 : 0.62}
-          onResults={(blobs, seed) => {
-            setResults({ blobs, seed, urls: blobs.map((b) => URL.createObjectURL(b)) });
-            setChosen(0);
-            blobs.forEach((b) => void keep(b, "background", `${bd.label} · seed ${seed}`));
-          }}
-        />
-      </PromptDock>
+      {(() => {
+        const make = (
+          <Generate
+            my={my}
+            section="background"
+            out={out}
+            aspect={ar}
+            image={editing ? (cutout ?? file) : null}
+            strength={cutout ? 1 : 0.62}
+            onResults={(blobs, seed) => {
+              setResults({ blobs, seed, urls: blobs.map((b) => URL.createObjectURL(b)) });
+              setChosen(0);
+              blobs.forEach((b) => void keep(b, "background", `${bd.label} · seed ${seed}`));
+              if (phone) window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          />
+        );
+        return phone ? (
+          <MakeBar>{make}</MakeBar>
+        ) : (
+          <PromptDock out={out} my={my}>
+            {make}
+          </PromptDock>
+        );
+      })()}
     </div>
   );
 }

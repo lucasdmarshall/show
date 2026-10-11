@@ -10,6 +10,9 @@ import { keep } from "@/lib/vault";
 import { Choices, Grp } from "./Choices";
 import { Wall } from "./Wall";
 import { PromptDock } from "./PromptDock";
+import { useIsPhone } from "@/lib/useIsPhone";
+import { MakeBar, PromptBox } from "./PromptBox";
+
 import { Generate, Results } from "./Generate";
 import "./reverse.css";
 import "./room.css";
@@ -73,6 +76,7 @@ export function Baby({ my }: { my: boolean }) {
   const [results, setResults] = useState<{ urls: string[]; blobs: Blob[]; seed: number } | null>(null);
   const [chosen, setChosen] = useState(0);
   const input = useRef<HTMLInputElement>(null);
+  const phone = useIsPhone();
 
   useEffect(() => () => results?.urls.forEach((u) => URL.revokeObjectURL(u)), [results]);
 
@@ -149,16 +153,25 @@ export function Baby({ my }: { my: boolean }) {
           />
         </div>
 
+        {phone ? (
+          <>
+            {results ? <Results urls={results.urls} chosen={chosen} onChoose={setChosen} my={my} before={url} /> : null}
+            <PromptBox out={out} my={my} />
+          </>
+        ) : null}
+
         <Grp title="Themes" titleMy="Theme များ" my={my} aside={`${THEMES.length}`}>
           <Wall items={THEMES} cats={BABY_CATS} value={theme} onPick={setTheme} my={my} />
         </Grp>
 
         <Choices groups={GROUPS} selection={sel} onToggle={(g, o) => setSel(toggle(GROUPS, sel, g, o))} my={my} />
 
-        {results ? <Results urls={results.urls} chosen={chosen} onChoose={setChosen} my={my} before={url} /> : null}
+        {results && !phone ? <Results urls={results.urls} chosen={chosen} onChoose={setChosen} my={my} before={url} /> : null}
       </section>
 
-      <PromptDock out={out} my={my}>
+      {(() => {
+        const make = (
+          <>
         <label className="consent" data-on={consent || undefined}>
           <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
           <span className={my ? "my" : "t-small"}>
@@ -177,10 +190,20 @@ export function Baby({ my }: { my: boolean }) {
               setResults({ blobs, seed, urls: blobs.map((b) => URL.createObjectURL(b)) });
               setChosen(0);
               blobs.forEach((b) => void keep(b, "baby", `${th.label} · seed ${seed}`));
+              if (phone) window.scrollTo({ top: 0, behavior: "smooth" });
             }}
           />
         ) : null}
-      </PromptDock>
+          </>
+        );
+        return phone ? (
+          <MakeBar>{make}</MakeBar>
+        ) : (
+          <PromptDock out={out} my={my}>
+            {make}
+          </PromptDock>
+        );
+      })()}
     </div>
   );
 }
