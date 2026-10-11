@@ -59,6 +59,28 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-left: auto;
+}
+
+.app__prefs {
+  display: none;
+  align-items: center;
+  gap: 8px;
+}
+
+.map__prefs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* from tablet up there is room in the bar, and no All sheet */
+@media (min-width: 768px) {
+  .app__prefs {
+    display: flex;
+  }
 }
 
 /* -- segmented ---------------------------------------------------- */

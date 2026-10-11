@@ -637,3 +637,10 @@
   color: var(--gold-soft);
   border-color: var(--gold);
 }
+
+/* below 900px the phone studio (StudioPhone) takes over */
+@media (max-width: 899px) {
+  .studio {
+    display: none;
+  }
+}

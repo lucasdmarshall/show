@@ -73,6 +73,33 @@ export function AppShell({ section, onSection, my, onMy, children }: Props) {
     setMoreOpen(false);
   };
 
+  const prefs = (
+    <>
+      <div className="seg" role="group" aria-label="Language">
+        <button type="button" aria-pressed={!my} onClick={() => onMy(false)}>
+          EN
+        </button>
+        <button type="button" aria-pressed={my} onClick={() => onMy(true)} className="my">
+          မြန်မာ
+        </button>
+      </div>
+      <div className="seg seg--icon" role="group" aria-label="Theme">
+        {THEMES.map((t) => (
+          <button
+            key={t}
+            type="button"
+            aria-pressed={choice === t}
+            aria-label={t}
+            onClick={() => setTheme(t)}
+            title={t}
+          >
+            {t === "system" ? "A" : t === "light" ? "L" : "D"}
+          </button>
+        ))}
+      </div>
+    </>
+  );
+
   const grouped = (["direct", "fix", "deliver"] as GroupId[]).map((g) => ({
     g,
     items: SECTIONS.filter((s) => s.group === g),
@@ -88,28 +115,8 @@ export function AppShell({ section, onSection, my, onMy, children }: Props) {
 
         <div className="app__tools">
           <Account my={my} />
-          <div className="seg" role="group" aria-label="Language">
-            <button type="button" aria-pressed={!my} onClick={() => onMy(false)}>
-              EN
-            </button>
-            <button type="button" aria-pressed={my} onClick={() => onMy(true)} className="my">
-              မြန်မာ
-            </button>
-          </div>
-          <div className="seg seg--icon" role="group" aria-label="Theme">
-            {THEMES.map((t) => (
-              <button
-                key={t}
-                type="button"
-                aria-pressed={choice === t}
-                aria-label={t}
-                onClick={() => setTheme(t)}
-                title={t}
-              >
-                {t === "system" ? "A" : t === "light" ? "L" : "D"}
-              </button>
-            ))}
-          </div>
+          {/* on a phone these live in the All sheet, so the bar stays quiet */}
+          <div className="app__prefs">{prefs}</div>
         </div>
       </header>
 
@@ -184,6 +191,7 @@ export function AppShell({ section, onSection, my, onMy, children }: Props) {
               <span aria-hidden="true" />
             </button>
             <div className="map__scroll">
+              <div className="map__prefs">{prefs}</div>
               {grouped.map(({ g, items }) => (
                 <section className="map__grp" key={g}>
                   <h2 className={`map__label ${my ? "my" : "t-micro"}`}>

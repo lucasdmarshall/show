@@ -1,0 +1,486 @@
+/* ------------------------------------------------------------------
+   Studio on a phone — the prompt first, then an index of decisions.
+   Shown below 900px; the two-column studio takes over above it.
+   ------------------------------------------------------------------ */
+
+.sphone {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 0 18px;
+}
+
+@media (min-width: 900px) {
+  .sphone {
+    display: none;
+  }
+}
+
+.sphone svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+/* round icon buttons */
+.ring {
+  appearance: none;
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: border-color var(--d-quick) var(--ease-out), color var(--d-quick) var(--ease-out);
+}
+
+.ring--gold {
+  border-color: var(--gold-deep);
+  color: var(--gold);
+}
+
+.ring:active {
+  transform: scale(0.94);
+}
+
+.ring[data-busy] svg {
+  animation: ring-spin 1.2s linear infinite;
+}
+
+@keyframes ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ring--big {
+  width: 52px;
+  height: 52px;
+  background: var(--surface);
+}
+
+.ring--big svg {
+  width: 20px;
+  height: 20px;
+}
+
+.ring[data-done] {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+/* -- the mode, one big word ------------------------------------------ */
+
+.sphone__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 0 0;
+}
+
+.sphone__title {
+  min-width: 0;
+}
+
+.sphone__count {
+  margin: 0 0 6px;
+  color: var(--ink-3);
+}
+
+.sphone__mode {
+  margin: 0;
+  font-size: clamp(2.4rem, 12vw, 3.2rem);
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  animation: mode-in 600ms var(--ease-out);
+}
+
+.sphone__mode.my {
+  font-size: clamp(1.8rem, 9vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+@keyframes mode-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+.sphone__hint {
+  margin: 8px 0 0;
+  color: var(--ink-3);
+  font-size: var(--t-small);
+  line-height: 1.5;
+}
+
+.sphone__arrows {
+  display: flex;
+  gap: 8px;
+  padding-bottom: 30px;
+}
+
+/* -- the prompt ------------------------------------------------------- */
+
+.pbox {
+  margin-top: 20px;
+  padding: 12px 14px 14px;
+  border: 1px solid var(--gold-deep);
+  border-radius: 4px;
+  background: var(--surface);
+}
+
+.pbox__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.pbox__label {
+  color: var(--gold);
+}
+
+.pbox__tools {
+  display: flex;
+  gap: 6px;
+}
+
+.pbox__tools .ring {
+  width: 30px;
+  height: 30px;
+}
+
+.pbox__tools svg {
+  width: 14px;
+  height: 14px;
+}
+
+.pbox__switch {
+  display: inline-flex;
+  margin-bottom: 10px;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.pbox__switch button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: var(--t-micro);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.pbox__switch button[aria-selected="true"] {
+  background: var(--gold);
+  color: var(--gold-ink);
+}
+
+/* four lines until it is grown */
+.pbox__text {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--ink);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+  transition: opacity var(--d-quick) var(--ease-out);
+}
+
+.pbox[data-grown] .pbox__text {
+  -webkit-line-clamp: unset;
+  display: block;
+}
+
+.pbox__text[data-busy] {
+  opacity: 0.45;
+}
+
+.pbox__avoid {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--line-strong);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.pbox__avoid > span {
+  color: var(--gold);
+  margin-right: 6px;
+}
+
+.pbox__notes {
+  margin: 10px 0 0;
+  padding-left: 16px;
+  color: var(--ink-2);
+}
+
+.pbox__msg {
+  margin: 10px 0 0;
+  color: var(--warn);
+}
+
+/* -- search ----------------------------------------------------------- */
+
+.sphone__find {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 0 14px;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink-3);
+}
+
+.sphone__find input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.875rem;
+  outline: none;
+}
+
+.sphone__find button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* -- the index of decisions ------------------------------------------- */
+
+.index {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+}
+
+.ix {
+  border-top: 1px solid var(--line-strong);
+}
+
+.ix:last-child {
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.ix__head {
+  appearance: none;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) minmax(0, auto) 16px;
+  align-items: baseline;
+  gap: 10px;
+  padding: 14px 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ix__n {
+  font-size: var(--t-micro);
+  font-weight: 800;
+  color: var(--gold-deep);
+  font-variant-numeric: tabular-nums;
+}
+
+.ix__name {
+  font-size: 1.2rem;
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.ix__name.my {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.5;
+}
+
+.ix__value {
+  max-width: 44vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  color: var(--gold);
+  text-align: right;
+}
+
+.ix__value[data-empty] {
+  color: var(--ink-3);
+}
+
+.ix__chev {
+  align-self: center;
+  color: var(--ink-3);
+  transition: transform var(--d-base) var(--ease-out);
+}
+
+.ix[data-open] .ix__chev {
+  transform: rotate(180deg);
+  color: var(--gold);
+}
+
+.ix__opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 2px 0 18px 32px;
+  animation: ix-open 420ms var(--ease-out);
+}
+
+.ix__opts .field {
+  width: 100%;
+}
+
+@keyframes ix-open {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+/* chosen is outlined in gold, not filled */
+.opt {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 300;
+  cursor: pointer;
+  transition: border-color var(--d-quick) var(--ease-out), color var(--d-quick) var(--ease-out);
+}
+
+.opt[aria-pressed="true"] {
+  border-color: var(--gold);
+  color: var(--gold);
+  font-weight: 500;
+  box-shadow: inset 0 0 0 1px var(--gold-glow);
+}
+
+.opt--num {
+  font-variant-numeric: tabular-nums;
+}
+
+.opt__mm {
+  font-size: 0.5625rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  padding: 2px 4px;
+}
+
+/* -- make: above the tabs ----------------------------------------------- */
+
+.sphone__make {
+  position: sticky;
+  bottom: calc(57px + env(safe-area-inset-bottom));
+  z-index: 20;
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+  padding: 14px 0;
+  background: linear-gradient(to top, var(--bg) 65%, transparent);
+}
+
+/* no tab bar from tablet up */
+@media (min-width: 768px) {
+  .sphone__make {
+    bottom: 0;
+  }
+}
+
+.sphone__go {
+  appearance: none;
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--gold-ink);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 10px 30px -12px var(--gold);
+}
+
+.sphone__go .my {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 0.9rem;
+}
+
+.sphone__go:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.sphone__go--small {
+  flex: none;
+  padding: 0 20px;
+}
+
+.sphone__name {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+}
+
+.sphone__name .field {
+  flex: 1;
+  min-width: 0;
+}
+
+/* the index needs room to scroll past the Make bar */
+.index {
+  margin-bottom: 8px;
+}

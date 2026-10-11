@@ -8,6 +8,7 @@ import type { Images } from "@/lib/references";
 import { NO_PHOTOS, PhotoRefs, type Photos } from "./PhotoRefs";
 import type { Snapshot } from "@/lib/library";
 import "./studio.css";
+import { StudioPhone } from "./StudioPhone";
 
 const ASPECTS = [
   "1:1",
@@ -136,7 +137,51 @@ export function Studio({
     });
   };
 
+  /* Create gets the photographs only from the desktop studio — the phone
+     studio is prompt-first and has none to give */
+  const make = onImage
+    ? (refined: { prompt: string; negative: string } | null) =>
+        onImage({
+          prompt: refined ? refined.prompt : out.positive,
+          negative: refined ? refined.negative : out.negative,
+          aspect,
+          from: my ? active.labelMy : active.label,
+          image: photos.base?.blob ?? null,
+          refs: photos.refs.map((r) => r.blob),
+        })
+    : undefined;
+  const save = onSave
+    ? (title: string) =>
+        onSave(title, {
+          source: "studio",
+          mode,
+          selection,
+          extra,
+          aspect,
+          positive: out.positive,
+          negative: out.negative,
+          tokens: out.tokens,
+        })
+    : undefined;
+
   return (
+    <>
+    <StudioPhone
+      my={my}
+      mode={mode}
+      active={active}
+      onMode={setMode}
+      selection={selection}
+      onToggle={toggle}
+      aspects={ASPECTS}
+      aspect={aspect}
+      onAspect={(a) => setAspects((p) => ({ ...p, [mode]: a }))}
+      extra={extra}
+      onExtra={(v) => setExtras((p) => ({ ...p, [mode]: v }))}
+      out={out}
+      onImage={make}
+      onSave={save}
+    />
     <div className="studio">
       {/* ---------------- decisions ---------------- */}
       <section
@@ -339,38 +384,8 @@ export function Studio({
         )}
       </section>
 
-      <PromptDock
-        out={out}
-        my={my}
-        onImage={
-          onImage
-            ? (refined) =>
-                onImage({
-                  prompt: refined ? refined.prompt : out.positive,
-                  negative: refined ? refined.negative : out.negative,
-                  aspect,
-                  from: my ? active.labelMy : active.label,
-                  image: photos.base?.blob ?? null,
-                  refs: photos.refs.map((r) => r.blob),
-                })
-            : undefined
-        }
-        onSave={
-          onSave
-            ? (title) =>
-                onSave(title, {
-                  source: "studio",
-                  mode,
-                  selection,
-                  extra,
-                  aspect,
-                  positive: out.positive,
-                  negative: out.negative,
-                  tokens: out.tokens,
-                })
-            : undefined
-        }
-      />
+      <PromptDock out={out} my={my} onImage={make} onSave={save} />
     </div>
+    </>
   );
 }
