@@ -24,6 +24,13 @@ import { Histogram } from "./Histogram";
 import { Curves } from "./Curves";
 import { DropZone } from "./DropZone";
 import { keep } from "@/lib/vault";
+import { compileRoom, opt, toggle } from "@/lib/rooms";
+import type { Group } from "@/lib/catalogue";
+import type { Selection } from "@/lib/compile";
+import { Choices } from "./Choices";
+import { PromptDock } from "./PromptDock";
+import { Generate, Results } from "./Generate";
+import { AiTabs, type Way } from "./AiTabs";
 import "./grade.css";
 
 /* The preview is graded at this size; export goes back to the file. */
@@ -189,7 +196,57 @@ function Dial({
   );
 }
 
+/* The model regrades — colour and tone, nothing else. */
+const AI_GRADE: Group[] = [
+  {
+    id: "look",
+    label: "Look",
+    labelMy: "ပုံစံ",
+    order: 0,
+    options: [
+      opt("clean", "Natural & clean", "သဘာဝ သန့်သန့်", "a clean, natural colour grade: true whites, accurate skin, gentle contrast"),
+      opt("portra", "Warm film", "နွေးထွေး film", "a warm Kodak Portra film look: creamy highlights, soft warm skin, fine grain"),
+      opt("gold", "Kodak Gold", "Kodak Gold", "a Kodak Gold 200 look: golden warmth, saturated yellows and reds, nostalgic"),
+      opt("chrome", "Classic chrome", "Classic chrome", "a Fujifilm Classic Chrome look: muted colour, deep shadows, documentary calm"),
+      opt("cine", "Cinematic", "ရုပ်ရှင်ဆန်", "a cinematic teal-and-orange grade: warm skin against cool shadows, rich contrast"),
+      opt("monsoon", "Monsoon", "မိုးရာသီ", "a moody monsoon grade: cool diffuse light, deep greens, soft wet sheen", { mm: true }),
+      opt("golden", "Golden hour", "ရွှေရောင် ညနေ", "the warmth of golden hour: low amber light, glowing rim, long soft shadows"),
+      opt("pastel", "Soft pastel", "ပန်းနု", "a soft pastel grade: lifted shadows, airy highlights, gentle desaturated colour"),
+      opt("wedding", "Wedding gold", "မင်္ဂလာ ရွှေ", "a Burmese wedding grade: rich golds and silk reds glowing, warm skin, luxurious", { mm: true }),
+      opt("bw", "Black & white", "အဖြူအမည်း", "a rich black-and-white conversion: deep blacks, luminous skin, fine silver grain"),
+    ],
+  },
+  {
+    id: "fix",
+    label: "Fix as well",
+    labelMy: "တစ်ခါတည်း ပြင်",
+    order: 1,
+    multi: true,
+    options: [
+      opt("exposure", "Exposure", "အလင်း", "the exposure balanced: no blown highlights, open shadows"),
+      opt("white", "White balance", "White balance", "the white balance corrected to neutral"),
+      opt("skin", "Skin tones", "အသားအရေ", "even, natural skin tones without smoothing or beautifying"),
+      opt("sky", "Sky", "ကောင်းကင်", "the sky recovered with natural colour and detail"),
+    ],
+  },
+  {
+    id: "strength",
+    label: "How strong",
+    labelMy: "ဘယ်လောက် ပြင်းမလဲ",
+    order: 2,
+    options: [
+      opt("subtle", "Subtle", "နည်းနည်း", "applied subtly"),
+      opt("clear", "Clear", "သိသာ", "applied clearly"),
+      opt("bold", "Bold", "ပြင်းပြင်း", "applied boldly"),
+    ],
+  },
+];
+
 export function Grade({ my }: { my: boolean }) {
+  /* the model grades by default; curves on this device are the second way */
+  const [way, setWay] = useState<Way>("ai");
+  const [aiSel, setAiSel] = useState<Selection>({ look: ["portra"], fix: ["exposure", "skin"], strength: ["clear"] });
+  const [results, setResults] = useState<{ urls: string[]; blobs: Blob[]; seed: number } | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [origUrl, setOrigUrl] = useState<string | null>(null);
   const [src, setSrc] = useState<ImageData | null>(null);
@@ -256,6 +313,7 @@ export function Grade({ my }: { my: boolean }) {
           }),
         };
 
+        setResults(null);
         setOrigUrl((prev) => {
           if (prev) URL.revokeObjectURL(prev);
           return URL.createObjectURL(f);
@@ -333,6 +391,17 @@ export function Grade({ my }: { my: boolean }) {
       if (s) Object.values(s).forEach((u) => URL.revokeObjectURL(u));
     },
     [],
+  );
+
+  const ar = aspect > 1.6 ? "16:9" : aspect >= 1.2 ? "3:2" : aspect > 0.9 ? "1:1" : aspect < 0.7 ? "2:3" : "4:5";
+  const aiOut = useMemo(
+    () =>
+      compileRoom(AI_GRADE, aiSel, ar, {
+        lead: ["regrade the colour and tone of this photograph only"],
+        negatives: ["changed face", "changed composition", "added objects", "plastic skin", "oversaturation"],
+        edit: { strength: 0.3, keep: ["every face and identity", "every object and its shape", "the composition", "the sharpness"] },
+      }),
+    [aiSel, ar],
   );
 
   const layers: RevealLayer[] = useMemo(() => {
@@ -440,8 +509,8 @@ export function Grade({ my }: { my: boolean }) {
           my={my}
           title="Grade a photograph"
           titleMy="ဓာတ်ပုံတစ်ပုံ အရောင်ညှိမယ်"
-          sub="Tone, colour and curves, rendered on this device. No balance spent, no internet needed, no wait."
-          subMy="အလင်းအမှောင်၊ အရောင်၊ curve — ဒီစက်ပေါ်မှာပဲ။ Balance မကုန်၊ internet မလို၊ မစောင့်ရ။"
+          sub="Pick a look and AI regrades the colour and tone — faces and everything in the frame stay as shot. Curves and a .cube LUT on this device are there too."
+          subMy="Look တစ်ခု ရွေးလိုက်ရင် AI က အရောင်နဲ့ အလင်းအမှောင်ကို ညှိပေးမယ် — မျက်နှာနဲ့ ပုံထဲက အရာအားလုံး မူရင်းအတိုင်း။ ဒီစက်ပေါ်မှာ curve နဲ့ .cube LUT လည်း ရှိတယ်။"
           busy={busy}
           error={error}
           onFile={(f) => void take(f)}
@@ -459,6 +528,18 @@ export function Grade({ my }: { my: boolean }) {
         className="grade__stage"
         aria-label={my ? "ဓာတ်ပုံ" : "Photograph"}
       >
+        <AiTabs way={way} onWay={setWay} my={my} />
+        {way === "ai" ? (
+          results ? (
+            <Results urls={results.urls} chosen={0} onChoose={() => {}} my={my} before={origUrl} aspect={aspect} />
+          ) : (
+            <div className="grade__frame" style={{ "--ar": aspect } as React.CSSProperties}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="ai__photo" src={origUrl ?? ""} alt={my ? "မူရင်း ဓာတ်ပုံ" : "The photograph"} />
+            </div>
+          )
+        ) : (
+        <>
         {/* width follows the height budget, so the frame is always the
             photograph's own shape and the handle maps onto real pixels */}
         <div
@@ -478,6 +559,8 @@ export function Grade({ my }: { my: boolean }) {
           />
         </div>
         <Histogram data={hist} my={my} />
+        </>
+        )}
       </section>
 
       {/* ---------------- controls ---------------- */}
@@ -485,6 +568,47 @@ export function Grade({ my }: { my: boolean }) {
         className="grade__panel"
         aria-label={my ? "ထိန်းချုပ်မှု" : "Controls"}
       >
+        {way === "ai" ? (
+          <>
+            <Choices groups={AI_GRADE} selection={aiSel} onToggle={(g, o) => setAiSel(toggle(AI_GRADE, aiSel, g, o))} my={my} />
+            <div className="inset-dock">
+              <PromptDock out={aiOut} my={my} />
+            </div>
+            <Generate
+              my={my}
+              section="grade"
+              out={aiOut}
+              aspect={ar}
+              image={file}
+              strength={0.3}
+              label="Grade with AI"
+              labelMy="AI နဲ့ အရောင်ညှိမည်"
+              onResults={(blobs, seed) => {
+                results?.urls.forEach((u) => URL.revokeObjectURL(u));
+                setResults({ blobs, seed, urls: blobs.map((b) => URL.createObjectURL(b)) });
+              }}
+            />
+            <div className="grade__row">
+              {results ? (
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => {
+                    const b = results.blobs[0];
+                    download(b, `${(file?.name ?? "photo").replace(/\.[^.]+$/, "")}-graded-${results.seed}.jpg`);
+                    void keep(b, "grade", `seed ${results.seed}`);
+                  }}
+                >
+                  {my ? "သိမ်းမည်" : "Save"}
+                </button>
+              ) : null}
+              <button type="button" className="btn btn--quiet" onClick={() => replaceInput.current?.click()}>
+                {my ? "တခြားပုံ" : "Another photo"}
+              </button>
+            </div>
+          </>
+        ) : (
+        <>
         <div
           className="grade__looks"
           role="group"
@@ -648,18 +772,20 @@ export function Grade({ my }: { my: boolean }) {
             >
               {my ? "တခြားပုံ" : "Another photo"}
             </button>
-            <input
-              ref={replaceInput}
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={(e) => {
-                void take(e.target.files?.[0]);
-                e.target.value = "";
-              }}
-            />
           </div>
         </div>
+        </>
+        )}
+        <input
+          ref={replaceInput}
+          type="file"
+          accept="image/*"
+          hidden
+          onChange={(e) => {
+            void take(e.target.files?.[0]);
+            e.target.value = "";
+          }}
+        />
       </section>
     </div>
   );

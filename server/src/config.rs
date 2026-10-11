@@ -35,6 +35,8 @@ pub struct Config {
     pub refiner: Refiner,
     /// refinements per account per day — they are free, but not unlimited
     pub refine_daily: i64,
+    /// most images one request may make — each one is paid for upstream
+    pub max_images: u8,
     /// Every signed-in account counts as a member. Local development only.
     pub dev_premium: bool,
     /// Firebase project whose ID tokens sign people in; None = passwords only
@@ -88,6 +90,7 @@ impl Config {
             provider,
             refiner,
             refine_daily: var("SHOW_REFINE_DAILY", "120").parse().unwrap_or(120),
+            max_images: var("SHOW_MAX_IMAGES", "1").parse::<u8>().unwrap_or(1).clamp(1, 4),
             dev_premium: var("SHOW_DEV_PREMIUM", "0") == "1",
             firebase_project: env::var("FIREBASE_PROJECT_ID").ok().filter(|p| !p.trim().is_empty()),
         })
@@ -103,6 +106,7 @@ impl Config {
             provider: ProviderKind::Dev,
             refiner: Refiner::Dev,
             refine_daily: 5,
+            max_images: 1,
             dev_premium: false,
             firebase_project: None,
         }

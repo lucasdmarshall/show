@@ -82,13 +82,15 @@ pub async fn generate(State(st): State<AppState>, user: User, mut form: Multipar
             _ => {}
         }
     }
-    let req = req.ok_or_else(|| bad("missing the request part"))?;
+    let mut req = req.ok_or_else(|| bad("missing the request part"))?;
     if req.prompt.trim().is_empty() || req.prompt.len() > MAX_PROMPT {
         return Err(bad("the prompt is empty or too long"));
     }
     if !(1..=4).contains(&req.count) {
         return Err(bad("count must be 1 to 4"));
     }
+    /* every image costs money upstream: never more than the studio allows */
+    req.count = req.count.min(st.cfg.max_images);
     let model = match &req.model {
         Some(id) => st.models.iter().find(|m| &m.id == id).cloned().ok_or_else(|| bad(format!("no model called {id}")))?,
         None => st.models.first().cloned().ok_or_else(|| bad("no image model is configured"))?,

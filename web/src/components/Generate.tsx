@@ -10,8 +10,8 @@ import "./generate.css";
 /* ------------------------------------------------------------------
    The premium half of a room. The prompt above it is always free and
    always copyable; this is the button that makes the photograph on
-   SHOW's own servers instead. Four results come back, not one — the
-   person picks, and the seed is shown so the pick can be made again.
+   SHOW's own servers instead. One result per press — every image is paid
+   for — and the seed is shown so the same frame can be made again.
    ------------------------------------------------------------------ */
 
 type Props = {
@@ -83,7 +83,7 @@ export function Generate({
           refs,
           mask,
           seed,
-          count: 4,
+          count: 1,
           aspect,
           strength,
         },
@@ -121,8 +121,8 @@ export function Generate({
                 ? "ထုတ်နေသည်…"
                 : "Making…"
               : my
-                ? (labelMy ?? "ပုံ ၄ ပုံ ထုတ်မည်")
-                : (label ?? "Make 4")}
+                ? (labelMy ?? "ပုံထုတ်မည်")
+                : (label ?? "Make image")}
           </span>
           <span className="gen__tier">Premium</span>
         </button>
@@ -193,7 +193,7 @@ export function Generate({
   );
 }
 
-/** Four results, one chosen. */
+/** The result — or, from older requests, a few to choose between. */
 export function Results({
   urls,
   chosen,
@@ -216,9 +216,10 @@ export function Results({
 }) {
   if (!urls.length) return null;
   const pick = urls[chosen] ?? urls[0];
+  const compare = !!before && !video;
   return (
     <div className="gen__out">
-      {before && !video ? (
+      {compare ? (
         /* an edit is judged against what it was made from, at the seam */
         <div
           className="gen__comparebox"
@@ -247,36 +248,40 @@ export function Results({
           />
         </div>
       ) : null}
-      <div
-        className="gen__results"
-        role="radiogroup"
-        aria-label={my ? "ရလဒ်များ" : "Results"}
-      >
-        {urls.map((u, i) => (
-          <button
-            key={u}
-            type="button"
-            role="radio"
-            aria-checked={chosen === i}
-            onClick={() => onChoose(i)}
-            className="gen__result"
-          >
-            {video ? (
-              <video
-                src={u}
-                muted
-                loop
-                autoPlay
-                playsInline
-                aria-label={`${my ? "ရလဒ်" : "Result"} ${i + 1}`}
-              />
-            ) : (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img src={u} alt={`${my ? "ရလဒ်" : "Result"} ${i + 1}`} />
-            )}
-          </button>
-        ))}
-      </div>
+      {/* one result already fills the compare; more than one, or none to
+          compare against, needs the strip */}
+      {urls.length > 1 || !compare ? (
+        <div
+          className="gen__results"
+          role="radiogroup"
+          aria-label={my ? "ရလဒ်များ" : "Results"}
+        >
+          {urls.map((u, i) => (
+            <button
+              key={u}
+              type="button"
+              role="radio"
+              aria-checked={chosen === i}
+              onClick={() => onChoose(i)}
+              className="gen__result"
+            >
+              {video ? (
+                <video
+                  src={u}
+                  muted
+                  loop
+                  autoPlay
+                  playsInline
+                  aria-label={`${my ? "ရလဒ်" : "Result"} ${i + 1}`}
+                />
+              ) : (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={u} alt={`${my ? "ရလဒ်" : "Result"} ${i + 1}`} />
+              )}
+            </button>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

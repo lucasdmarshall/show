@@ -536,3 +536,16 @@
     background: var(--bg);
   }
 }
+
+/* -- AI first: the way switch, and the scan shown before the model runs -- */
+
+.ai-tabs {
+  align-self: flex-start;
+}
+
+.restore__scan,
+.ai__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}

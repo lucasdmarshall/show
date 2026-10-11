@@ -251,7 +251,8 @@ export function Create({ my, seed }: { my: boolean; seed?: CreateSeed }) {
   const [prompt, setPrompt] = useState(seed?.prompt ?? "");
   const [negative, setNegative] = useState(seed?.negative ?? "");
   const [aspect, setAspect] = useState(seed?.aspect ?? "4:5");
-  const [count, setCount] = useState(2);
+  /* one image a press: every one is paid for */
+  const count = 1;
   const [editText, setEditText] = useState(seed?.image ? seed.prompt : "");
   const [refs, setRefs] = useState<Ref[]>(() =>
     (seed?.refs ?? []).map((b) => ({ id: uid(), blob: b, url: URL.createObjectURL(b) })),
@@ -677,13 +678,6 @@ export function Create({ my, seed }: { my: boolean; seed?: CreateSeed }) {
         </AnimatePresence>
 
         <div className="cpanel__go">
-          <div className="cpanel__count" role="radiogroup" aria-label={my ? "အရေအတွက်" : "How many"}>
-            {[1, 2, 3, 4].map((n) => (
-              <button key={n} type="button" role="radio" aria-checked={count === n} onClick={() => setCount(n)}>
-                {n}
-              </button>
-            ))}
-          </div>
           <button
             type="button"
             className="btn btn--image cpanel__make"

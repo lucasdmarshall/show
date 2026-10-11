@@ -130,16 +130,16 @@ export const DETAILS: Record<SectionId, { en: string[]; my: string[] }> = {
     my: ["နောက်ခံ + လူ · cut-out မလို", "မျက်နှာ မူရင်းပုံကနေပဲ", "မိသားစု ပြန်ဆုံ"],
   },
   restore: {
-    en: ["Dust, scratches, fading — on device", "Colourise with chosen garment colours", "Living Memory: bring it to life"],
-    my: ["ဖုန်၊ အစင်း၊ အရောင်လွင့် — စက်ပေါ်မှာ", "ဝတ်စုံအရောင် ရွေးပြီး အရောင်သွင်း", "Living Memory — လှုပ်ရှားလာအောင်"],
+    en: ["AI repair — damage, faces, tears", "Colourise with chosen garment colours", "Living Memory: bring it to life"],
+    my: ["AI ပြင် — ပျက်စီးတာ၊ မျက်နှာ၊ စုတ်ပြဲ", "ဝတ်စုံအရောင် ရွေးပြီး အရောင်သွင်း", "Living Memory — လှုပ်ရှားလာအောင်"],
   },
   baby: {
     en: ["32 themes", "Mood and light", "Parental consent first"],
     my: ["Theme ၃၂ မျိုး", "Mood နဲ့ အလင်း", "မိဘ ခွင့်ပြုချက် အရင်"],
   },
   grade: {
-    en: ["Curves and live histogram", "Export a .cube LUT", "Full-resolution JPG"],
-    my: ["Curves + live histogram", ".cube LUT ထုတ်", "Resolution အပြည့် JPG"],
+    en: ["AI regrade in one press", "Curves and live histogram on device", "Export a .cube LUT"],
+    my: ["AI နဲ့ တစ်ချက်တည်း အရောင်ညှိ", "Device ပေါ်မှာ curve + histogram", ".cube LUT ထုတ်"],
   },
   batch: {
     en: ["One look across a shoot", "Series coherence check", "Auto-cull soft, clipped and burst frames"],
@@ -178,8 +178,8 @@ export const UNDERNEATH: { en: [string, string]; my: [string, string] }[] = [
     my: ["မြန်မာ အဓိပ္ပာယ်ကို နားလည်", "လုံချည်၊ အချိတ်၊ သီတင်းကျွတ် မီးထွန်း — model မြင်နိုင်တဲ့ စကားနဲ့ ပြန်ရေးထားတယ်။"],
   },
   {
-    en: ["Your device first", "Grade, batch, restore and measure run on your own phone or laptop — free, private, offline."],
-    my: ["ကိုယ့်စက်ပေါ်မှာ အရင်", "Grade၊ batch၊ restore၊ တိုင်းတာ — ကိုယ့်ဖုန်း/laptop ပေါ်မှာ အခမဲ့၊ ပုဂ္ဂလိက၊ offline။"],
+    en: ["A free second way", "AI leads every fix; restore, grade, batch and measure also run free on your own phone or laptop — private, offline."],
+    my: ["အခမဲ့ ဒုတိယ နည်းလမ်း", "ပြင်တိုင်း AI က ဦးဆောင်တယ် — restore၊ grade၊ batch၊ တိုင်းတာကို ကိုယ့်ဖုန်း/laptop ပေါ်မှာ အခမဲ့၊ ပုဂ္ဂလိက၊ offline နဲ့လည်း လုပ်လို့ရ။"],
   },
   {
     en: ["Before against after", "Every result opens at 50%, drags anywhere, zooms to 800% at the seam."],

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { repair, RESTORE_DEFAULT, type RestoreSettings, type Tone } from "@/lib/restore";
 import { canvasOf, download, imageBlob, readImage, stem, toBlob } from "@/lib/image";
-import { compileRoom, opt, picked, toggle } from "@/lib/rooms";
+import { compileRoom, opt, toggle } from "@/lib/rooms";
 import type { Group } from "@/lib/catalogue";
 import type { Selection } from "@/lib/compile";
 import { keep } from "@/lib/vault";
@@ -12,20 +12,22 @@ import { DropZone } from "./DropZone";
 import { Amount, Choices, Grp } from "./Choices";
 import { PromptDock } from "./PromptDock";
 import { Generate, Results } from "./Generate";
+import { AiTabs, type Way } from "./AiTabs";
 import "./grade.css";
 import "./restore.css";
 
 const PREVIEW = 1400;
 
-/* What a model is needed for — the premium half of the room. */
+/* What the model does — the main way to restore. */
 const BEYOND: Group[] = [
   {
     id: "beyond",
-    label: "Beyond repair",
-    labelMy: "ပြင်တာထက် ပိုလုပ်မယ်",
+    label: "What to restore",
+    labelMy: "ဘာတွေ ပြန်ကောင်းအောင် လုပ်မလဲ",
     order: 0,
     multi: true,
     options: [
+      opt("repair", "Repair damage", "ပျက်စီးတာ ပြင်", "every scratch, crease, stain, dust speck and patch of fading removed, the original tones recovered"),
       opt("colour", "Colourise", "အရောင်ထည့်", "naturally colourised, true-to-era colour, realistic skin tones, subtle film-dye palette, no oversaturation"),
       opt("faces", "Bring back faces", "မျက်နှာ ပြန်ကြည်", "restored facial detail, clear eyes, natural skin texture, no beautification, identical likeness"),
       opt("rebuild", "Rebuild tears", "စုတ်ပြဲတာ ပြန်ဖြည့်", "torn, creased and missing areas rebuilt to match the surrounding print seamlessly"),
@@ -99,8 +101,9 @@ export function Restore({ my }: { my: boolean }) {
   const [exporting, setExporting] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
 
-  const [sel, setSel] = useState<Selection>({ beyond: ["colour"], era: ["1950"], wear: [], motion: [] });
-  const [finalBlob, setFinalBlob] = useState<Blob | null>(null);
+  /* the model restores by default; this device is the free second way */
+  const [way, setWay] = useState<Way>("ai");
+  const [sel, setSel] = useState<Selection>({ beyond: ["repair", "faces"], era: [], wear: [], motion: [] });
   const [results, setResults] = useState<{ urls: string[]; blobs: Blob[]; seed: number } | null>(null);
   const [chosen, setChosen] = useState(0);
 
@@ -136,9 +139,9 @@ export function Restore({ my }: { my: boolean }) {
     [my],
   );
 
-  /* -- repair, debounced; newest wins --------------------------- */
+  /* -- repair on this device, debounced; newest wins; only when it is the way in use */
   useEffect(() => {
-    if (!src) return;
+    if (!src || way !== "device") return;
     const g = ++gen.current;
     const timer = window.setTimeout(async () => {
       setWorking(true);
@@ -169,13 +172,12 @@ export function Restore({ my }: { my: boolean }) {
       const old = prev.current;
       prev.current = next;
       setStages(next);
-      setFinalBlob(c);
       setInfo({ touched: r.touched, mono: r.mono, ms });
       setWorking(false);
       if (old) window.setTimeout(() => Object.values(old).forEach((u) => URL.revokeObjectURL(u)), 400);
     }, 220);
     return () => window.clearTimeout(timer);
-  }, [src, s]);
+  }, [src, s, way]);
 
   useEffect(
     () => () => {
@@ -204,7 +206,7 @@ export function Restore({ my }: { my: boolean }) {
       (g.id === "motion" && beyond.includes("move")),
   );
   const moving = beyond.includes("move");
-  const strength = beyond.includes("rebuild") ? 0.55 : beyond.includes("colour") ? 0.38 : 0.25;
+  const strength = beyond.includes("rebuild") ? 0.55 : beyond.includes("colour") ? 0.38 : 0.3;
   const ar = aspect >= 1 ? (aspect > 1.6 ? "16:9" : "3:2") : aspect < 0.7 ? "2:3" : "4:5";
   const out = useMemo(
     () =>
@@ -256,8 +258,8 @@ export function Restore({ my }: { my: boolean }) {
           my={my}
           title="Bring an old photograph back"
           titleMy="ဓာတ်ပုံဟောင်း ပြန်ကောင်းအောင်"
-          sub="Dust, scratches and fading are repaired on this device, and only the damage is touched — the face comes back exactly as it was. Colour and motion are there when you want them."
-          subMy="ဖုန်မှုန့်၊ ခြစ်ရာ၊ မှေးမှိန်မှုကို ဒီစက်ပေါ်မှာပဲ ပြင်မယ် — ပျက်စီးတဲ့နေရာကိုပဲ ထိမယ်၊ မျက်နှာက မူရင်းအတိုင်း ပြန်လာမယ်။ အရောင်ထည့်ချင်ရင်၊ ရွေ့စေချင်ရင်လည်း ရ။"
+          sub="AI repairs the scratches, tears and fading, brings the faces back and can add colour or motion — keeping the likeness. A free repair on this device is there too."
+          subMy="AI က ခြစ်ရာ၊ စုတ်ပြဲ၊ မှေးမှိန်မှုကို ပြင်ပြီး မျက်နှာတွေ ပြန်ကြည်လာအောင် လုပ်မယ် — အရောင်ထည့်တာ၊ ရွေ့လာအောင် လုပ်တာလည်း ရတယ်၊ မျက်နှာက မူရင်းအတိုင်း။ ဒီစက်ပေါ်မှာ အခမဲ့ ပြင်တာလည်း ရှိတယ်။"
           busy={busy}
           error={error}
           onFile={(f) => void take(f)}
@@ -268,106 +270,92 @@ export function Restore({ my }: { my: boolean }) {
 
   const pct = info ? (info.touched / (src.width * src.height)) * 100 : 0;
 
+  const another = (
+    <>
+      <button type="button" className="btn btn--quiet" onClick={() => replace.current?.click()}>
+        {my ? "တခြားပုံ" : "Another"}
+      </button>
+      <input
+        ref={replace}
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={(e) => {
+          void take(e.target.files?.[0]);
+          e.target.value = "";
+        }}
+      />
+    </>
+  );
+
   return (
     <div className="grade restore">
       <section className="grade__stage" aria-label={my ? "ဓာတ်ပုံ" : "Photograph"}>
-        <div className="grade__frame" style={{ "--ar": aspect } as React.CSSProperties}>
-          <Reveal
-            key={origUrl}
-            src={origUrl ?? ""}
-            alt={my ? "ပြုပြင်မှု အဆင့်လိုက်" : "The repair, stage by stage"}
-            layers={layers}
-            my={my}
-            fit="contain"
-            aspect={aspect}
-            initial={0.9}
-            className="grade__reveal"
-          />
-        </div>
-        <p className={`restore__proof ${my ? "my" : "t-small"}`} data-working={working || undefined}>
-          {working
-            ? my
-              ? "ပြင်နေသည်…"
-              : "Repairing…"
-            : info
-              ? my
-                ? `ပျက်စီးတဲ့ pixel ${info.touched.toLocaleString()} ခု (${pct.toFixed(2)}%) ကိုပဲ ပြန်ဖြည့်ထား — ကျန်တာ မူရင်းအတိုင်း`
-                : `${info.touched.toLocaleString()} damaged pixels repainted (${pct.toFixed(2)}%) — every other pixel is as scanned`
-              : ""}
-        </p>
-        {results ? (
-          <div className="restore__results">
-            <Results urls={results.urls} chosen={chosen} onChoose={setChosen} my={my} video={moving} before={stages?.final ?? null} />
-          </div>
-        ) : null}
+        <AiTabs way={way} onWay={setWay} my={my} />
+
+        {way === "ai" ? (
+          results ? (
+            /* the restoration, against the scan it came from */
+            <Results urls={results.urls} chosen={chosen} onChoose={setChosen} my={my} video={moving} before={origUrl} aspect={aspect} />
+          ) : (
+            <div className="grade__frame" style={{ "--ar": aspect } as React.CSSProperties}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="restore__scan" src={origUrl ?? ""} alt={my ? "မူရင်း ဓာတ်ပုံ" : "The photograph as scanned"} />
+            </div>
+          )
+        ) : (
+          <>
+            <div className="grade__frame" style={{ "--ar": aspect } as React.CSSProperties}>
+              <Reveal
+                key={origUrl}
+                src={origUrl ?? ""}
+                alt={my ? "ပြုပြင်မှု အဆင့်လိုက်" : "The repair, stage by stage"}
+                layers={layers}
+                my={my}
+                fit="contain"
+                aspect={aspect}
+                initial={0.9}
+                className="grade__reveal"
+              />
+            </div>
+            <p className={`restore__proof ${my ? "my" : "t-small"}`} data-working={working || undefined}>
+              {working
+                ? my
+                  ? "ပြင်နေသည်…"
+                  : "Repairing…"
+                : info
+                  ? my
+                    ? `ပျက်စီးတဲ့ pixel ${info.touched.toLocaleString()} ခု (${pct.toFixed(2)}%) ကိုပဲ ပြန်ဖြည့်ထား — ကျန်တာ မူရင်းအတိုင်း`
+                    : `${info.touched.toLocaleString()} damaged pixels repainted (${pct.toFixed(2)}%) — every other pixel is as scanned`
+                  : ""}
+            </p>
+          </>
+        )}
       </section>
 
       <section className="grade__panel" aria-label={my ? "ထိန်းချုပ်မှု" : "Controls"}>
-        <Grp title="Repair · on this device" titleMy="ပြင်ဆင် · ဒီစက်ပေါ်မှာ" my={my} aside={info ? `${Math.round(info.ms)} ms` : undefined}>
-          <Amount label="Dust & specks" labelMy="ဖုန်မှုန့်" value={s.dust} onChange={(v) => setS({ ...s, dust: v })} my={my} />
-          <Amount label="Scratches" labelMy="ခြစ်ရာ" value={s.scratches} onChange={(v) => setS({ ...s, scratches: v })} my={my} />
-          <Amount label="Fading & cast" labelMy="မှေးမှိန်မှု" value={s.fade} onChange={(v) => setS({ ...s, fade: v })} my={my} />
-          <Amount label="Sharpen" labelMy="ပြတ်သား" value={s.sharpen} onChange={(v) => setS({ ...s, sharpen: v })} my={my} />
-        </Grp>
-
-        <Grp title="Tone" titleMy="အရောင်အသွေး" my={my} aside={info ? (info.mono ? (my ? "အဖြူအမည်း ပုံ" : "monochrome print") : my ? "ရောင်စုံ ပုံ" : "colour print") : undefined}>
-          <div className="grp__opts">
-            {TONES.map((t) => (
-              <button key={t.id} type="button" className="chip" aria-pressed={s.tone === t.id} onClick={() => setS({ ...s, tone: t.id })}>
-                <span className={my ? "my" : undefined}>{my ? t.my : t.en}</span>
-              </button>
-            ))}
-          </div>
-        </Grp>
-
-        <div className="grade__acts restore__acts">
-          {notice ? (
-            <p className={`grade__notice ${my ? "my" : "t-small"}`} role="status">
-              {notice}
-            </p>
-          ) : null}
-          <div className="grade__row">
-            <button type="button" className="btn" onClick={exportFull} disabled={exporting || working}>
-              {exporting ? (my ? "ထုတ်နေသည်…" : "Restoring at full size…") : my ? "JPG ထုတ်မည်" : "Export JPG"}
-            </button>
-            <button type="button" className="btn btn--quiet" onClick={() => replace.current?.click()}>
-              {my ? "တခြားပုံ" : "Another"}
-            </button>
-            <input
-              ref={replace}
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={(e) => {
-                void take(e.target.files?.[0]);
-                e.target.value = "";
-              }}
+        {way === "ai" ? (
+          <>
+            <Choices groups={groups} selection={sel} onToggle={(g, o) => setSel(toggle(BEYOND, sel, g, o))} my={my} />
+            <div className="inset-dock">
+              <PromptDock out={out} my={my} />
+            </div>
+            <Generate
+              my={my}
+              section="restore"
+              out={out}
+              aspect={ar}
+              image={file}
+              strength={strength}
+              label={moving ? "Make it move" : "Restore with AI"}
+              labelMy={moving ? "ရွေ့လာအောင် လုပ်မည်" : "AI နဲ့ ပြန်ကောင်းအောင် လုပ်မည်"}
+              onResults={takeResults}
             />
-          </div>
-        </div>
-
-        <div className="restore__premium">
-          <Choices groups={groups} selection={sel} onToggle={(g, o) => setSel(toggle(BEYOND, sel, g, o))} my={my} />
-          {picked(groups, sel).length ? (
-            <>
-              <div className="inset-dock">
-                <PromptDock out={out} my={my} />
-              </div>
-              <Generate
-                my={my}
-                section="restore"
-                out={out}
-                aspect={ar}
-                image={finalBlob}
-                strength={strength}
-                label={moving ? "Make it move" : "Make 4"}
-                labelMy={moving ? "ရွေ့လာအောင် လုပ်မည်" : undefined}
-                onResults={takeResults}
-              />
+            <div className="grade__row">
               {results ? (
                 <button
                   type="button"
-                  className="lib__act"
+                  className="btn"
                   onClick={() => {
                     const b = results.blobs[chosen];
                     const ext = b.type.includes("video") ? "mp4" : "jpg";
@@ -375,12 +363,46 @@ export function Restore({ my }: { my: boolean }) {
                     if (!b.type.includes("video")) void keep(b, "restore", stem(file?.name));
                   }}
                 >
-                  {my ? "ရွေးထားတာ သိမ်းမည်" : "Keep the chosen one"}
+                  {my ? "သိမ်းမည်" : "Save"}
                 </button>
               ) : null}
-            </>
-          ) : null}
-        </div>
+              {another}
+            </div>
+          </>
+        ) : (
+          <>
+            <Grp title="Repair · on this device" titleMy="ပြင်ဆင် · ဒီစက်ပေါ်မှာ" my={my} aside={info ? `${Math.round(info.ms)} ms` : undefined}>
+              <Amount label="Dust & specks" labelMy="ဖုန်မှုန့်" value={s.dust} onChange={(v) => setS({ ...s, dust: v })} my={my} />
+              <Amount label="Scratches" labelMy="ခြစ်ရာ" value={s.scratches} onChange={(v) => setS({ ...s, scratches: v })} my={my} />
+              <Amount label="Fading & cast" labelMy="မှေးမှိန်မှု" value={s.fade} onChange={(v) => setS({ ...s, fade: v })} my={my} />
+              <Amount label="Sharpen" labelMy="ပြတ်သား" value={s.sharpen} onChange={(v) => setS({ ...s, sharpen: v })} my={my} />
+            </Grp>
+
+            <Grp title="Tone" titleMy="အရောင်အသွေး" my={my} aside={info ? (info.mono ? (my ? "အဖြူအမည်း ပုံ" : "monochrome print") : my ? "ရောင်စုံ ပုံ" : "colour print") : undefined}>
+              <div className="grp__opts">
+                {TONES.map((t) => (
+                  <button key={t.id} type="button" className="chip" aria-pressed={s.tone === t.id} onClick={() => setS({ ...s, tone: t.id })}>
+                    <span className={my ? "my" : undefined}>{my ? t.my : t.en}</span>
+                  </button>
+                ))}
+              </div>
+            </Grp>
+
+            <div className="grade__acts restore__acts">
+              {notice ? (
+                <p className={`grade__notice ${my ? "my" : "t-small"}`} role="status">
+                  {notice}
+                </p>
+              ) : null}
+              <div className="grade__row">
+                <button type="button" className="btn" onClick={exportFull} disabled={exporting || working}>
+                  {exporting ? (my ? "ထုတ်နေသည်…" : "Restoring at full size…") : my ? "JPG ထုတ်မည်" : "Export JPG"}
+                </button>
+                {another}
+              </div>
+            </div>
+          </>
+        )}
       </section>
     </div>
   );

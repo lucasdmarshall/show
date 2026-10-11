@@ -621,8 +621,8 @@ export function Harmonize({ my }: { my: boolean }) {
               aspect={ar}
               image={aiImage}
               refs={[subject.file]}
-              label="Put them in · 4"
-              labelMy="ထည့်မည် · ၄ ပုံ"
+              label="Put them in"
+              labelMy="ထည့်မည်"
               onResults={(blobs, seed) => {
                 results?.urls.forEach((u) => URL.revokeObjectURL(u));
                 setResults({ blobs, seed, urls: blobs.map((b) => URL.createObjectURL(b)) });

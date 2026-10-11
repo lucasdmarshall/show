@@ -130,7 +130,7 @@ async fn generation_is_for_members() {
     assert_eq!(s, StatusCode::OK, "{}", String::from_utf8_lossy(&b));
     let out: Value = serde_json::from_slice(&b).unwrap();
     let images = out["images"].as_array().unwrap();
-    assert_eq!(images.len(), 4, "four results to choose from");
+    assert_eq!(images.len(), 1, "asked for four, made one: SHOW_MAX_IMAGES defaults to 1");
     assert_eq!(out["provider"], "dev");
 
     /* each result can be fetched without credentials */
